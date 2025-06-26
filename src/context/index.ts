@@ -3,7 +3,7 @@ import SDK from "@hyperledger/identus-sdk";
 
 import { DatabaseState, GroupedDIDs } from "@/utils/types";
 import { RIDB, StartOptions } from "@trust0/ridb";
-import { schemas } from "@/utils/db/schemas";
+import { schemas } from "@trust0/identus-react/db";
 import { Doc } from "@trust0/ridb-core";
 
 export type Theme = 'dark' | 'light';
@@ -25,13 +25,10 @@ export const AgentContext = createContext<{
     start: () => Promise<void>;
     stop: () => Promise<void>;
     readMessage: (message: SDK.Domain.Message) => Promise<void>;
-
     deleteMessage: (message: SDK.Domain.Message) => Promise<void>;
-    //TODO: move this to a task in the Agent
     processRequestCredentialMessage(
         message: SDK.RequestCredential
     ): Promise<SDK.IssueCredential>
-
     messages: { message: SDK.Domain.Message, read: boolean }[];
     connections: SDK.Domain.DIDPair[];
     credentials: SDK.Domain.Credential[];

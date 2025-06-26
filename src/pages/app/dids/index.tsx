@@ -8,8 +8,9 @@ import { DIDItem } from "@/components/DIDItem";
 import { ErrorAlert } from "@/components/ErrorAlert";
 import { useDatabase } from "@/hooks";
 import { GroupedDIDs } from "@/utils/types";
+import withLayout from "@/components/withLayout";
 
-export default function DIDsPage() {
+function DIDsPage() {
     const { db, getGroupedDIDs } = useDatabase();
     const router = useRouter();
     const [groupedDIDs, setGroupedDIDs] = useState<GroupedDIDs>({});
@@ -43,17 +44,6 @@ export default function DIDsPage() {
     const hasAnyDIDs = Object.values(groupedDIDs).some(dids => dids.length > 0);
 
     return (
-        <Layout>
-            <Head>
-                <title>DIDs | Identus Agent</title>
-                <meta name="description" content="Manage your decentralized identifiers" />
-            </Head>
-
-            <PageHeader
-                title="DIDs Management"
-                description="Create and manage your decentralized identifiers"
-            />
-
             <div className="bg-background-light dark:bg-background-dark hadow-sm">
                 {error && (
                     <ErrorAlert
@@ -103,6 +93,12 @@ export default function DIDsPage() {
                     </div>
                 )}
             </div>
-        </Layout>
     );
 } 
+
+
+export default withLayout(DIDsPage, {
+    title: "DIDs",
+    description: "Manage your decentralized identifiers",
+    pageHeader: true
+}); 

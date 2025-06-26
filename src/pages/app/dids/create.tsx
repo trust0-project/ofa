@@ -1,10 +1,8 @@
-import Head from "next/head";
-import Layout from "@/components/Layout";
-import PageHeader from "@/components/PageHeader";
 import { useState } from "react";
-import { useAgent } from "@/hooks";
+import { useAgent } from "@trust0/identus-react/hooks";
+import withLayout from "@/components/withLayout";
 
-export default function DIDsPage() {
+function DIDsPage() {
     const { agent } = useAgent();
     const [alias, setAlias] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
@@ -39,16 +37,7 @@ export default function DIDsPage() {
     };
 
     return (
-        <Layout>
-            <Head>
-                <title>DIDs | Identus Agent</title>
-                <meta name="description" content="Manage your decentralized identifiers" />
-            </Head>
-
-            <PageHeader
-                title="DIDs Management"
-                description="Create and manage your decentralized identifiers"
-            />
+        <>
 
             <div className="bg-background-light dark:bg-background-dark hadow-sm">
                 <div className="flex justify-between items-center mb-6">
@@ -97,6 +86,13 @@ export default function DIDsPage() {
                     )}
                 </div>
             </div>
-        </Layout>
+        </>
     );
 } 
+
+
+export default withLayout(DIDsPage, {
+    title: "DIDs",
+    description: "Manage your decentralized identifiers",
+    pageHeader: true
+}); 

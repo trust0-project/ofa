@@ -8,12 +8,12 @@ import { DatabaseState } from "@/utils/types";
 import { useWallet } from "@meshsdk/react";
 import { useRIDB } from "@trust0/ridb-react";
 import { RIDB, StartOptions, StorageType } from "@trust0/ridb";
-import { schemas } from "@/utils/db/schemas";
 import { uuid } from "@stablelib/uuid";
-import { useApollo } from "@/hooks";
 import { GroupedDIDs } from "@/utils/types";
 import { Doc } from "@trust0/ridb-core";
 import { createStore } from "@trust0/identus-store";
+import {schemas} from '@trust0/identus-react/db'
+import { useApollo } from "@trust0/identus-react/hooks";
 
 const hasDB = (db: RIDB<typeof schemas> | null):
     db is RIDB<typeof schemas> => db !== null;
@@ -26,7 +26,7 @@ export type DIDStatus = 'unpublished' | 'published' | 'deactivated';
 export function DatabaseProvider({ children }: { children: React.ReactNode }) {
     const { connect } = useWallet();
     const apollo = useApollo();
-    const db = useRIDB<typeof schemas>();
+    const {db} = useRIDB<typeof schemas>();
     const router = useRouter();
     const [redirectUrl, setRedirectUrl] = useState<string | null>(null);
     const [state, setState] = useState<DatabaseState>('disconnected');
@@ -355,7 +355,6 @@ export function DatabaseProvider({ children }: { children: React.ReactNode }) {
             setState('disconnected');
         }
     }, [db, getFeatures, getWallet, authRedirect]);
-
 
     useEffect(() => {
         if (!currentRoute.includes("/app")) {

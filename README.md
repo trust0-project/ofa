@@ -28,7 +28,7 @@ Identus storage can be extended to include and integrate new models and function
 
 ### Running this locally
 ```bash
-npm i
+yarn
 npm run dev
 ```
 

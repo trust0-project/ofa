@@ -1,6 +1,8 @@
 import SDK from "@hyperledger/identus-sdk";
 import { useEffect, useState } from "react";
-import { useAgent, useDatabase, usePermissions } from "@/hooks";
+import { useAgent, useIssuer, useMessages } from "@trust0/identus-react/hooks";
+
+import {  useDatabase, usePermissions } from "@/hooks";
 import { MessageTitle } from "./MessageTitle";
 import { useMessageStatus } from "./utils";
 import { useRouter } from "next/router";
@@ -12,8 +14,9 @@ export function CredentialRequest(props: { message: SDK.Domain.Message }) {
 
     const { hasPermission } = usePermissions();
     const { getIssuanceFlow } = useDatabase();
-    const { deleteMessage } = useAgent();
-    const { agent, processRequestCredentialMessage } = useAgent();
+    const { deleteMessage} = useMessages()
+
+    const { agent, issueCredential } = useIssuer();
 
     const [loaded, setLoaded] = useState(false);
     const [isAgent, setIsAgent] = useState(false);
@@ -36,14 +39,15 @@ export function CredentialRequest(props: { message: SDK.Domain.Message }) {
     }, [hasAnswered])
 
     async function onAcceptCredentialRequest() {
-        try {
-            setIsAnswering(true);
-            const requestCredentialMessage = SDK.RequestCredential.fromMessage(message);
-            const issueCredentialMessage = await processRequestCredentialMessage(requestCredentialMessage);
-            await agent?.send(issueCredentialMessage.makeMessage());
-        } catch (err) {
-            console.log("continue after err", err);
-        }
+        //TODO
+        // try {
+        //     setIsAnswering(true);
+        //     const requestCredentialMessage = SDK.RequestCredential.fromMessage(message);
+        //     const issueCredentialMessage = await processRequestCredentialMessage(requestCredentialMessage);
+        //     await agent?.send(issueCredentialMessage.makeMessage());
+        // } catch (err) {
+        //     console.log("continue after err", err);
+        // }
     }
 
     async function onDeleteCredentialRequest() {

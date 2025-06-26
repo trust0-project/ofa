@@ -11,6 +11,7 @@ import SDK from "@hyperledger/identus-sdk";
 import { DragDropContext, Droppable, Draggable, DropResult, DroppableProvided, DraggableProvided } from "react-beautiful-dnd";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDatabase } from "@/hooks";
+import withLayout from "@/components/withLayout";
 
 type Claim = {
     id: string;
@@ -52,7 +53,7 @@ const claimTemplates: ClaimTemplate[] = [
     }
 ];
 
-export default function CreateIssuanceRequestPage() {
+function CreateIssuanceRequestPage() {
     const { db, error: dbError, createIssuanceFlow } = useDatabase();
 
     const router = useRouter();
@@ -167,16 +168,6 @@ export default function CreateIssuanceRequestPage() {
     };
 
     return (
-        <Layout showDIDSelector={true}>
-            <Head>
-                <title>Create Issuance Request | Identus Agent</title>
-                <meta name="description" content="Create a new credential issuance request" />
-            </Head>
-
-            <PageHeader
-                title="Create Issuance Request"
-                description="Define a new credential issuance request"
-            />
 
             <div className="bg-background-light dark:bg-background-dark shadow-sm p-6 rounded-lg">
                 <form onSubmit={handleSubmit}>
@@ -410,6 +401,13 @@ export default function CreateIssuanceRequestPage() {
                     </div>
                 </form>
             </div>
-        </Layout>
     );
 } 
+
+
+export default withLayout(CreateIssuanceRequestPage, {
+    title: "Create Issuance Request",
+    description: "Create a new credential issuance request",
+    pageHeader: true,
+    showDIDSelector: true
+}); 

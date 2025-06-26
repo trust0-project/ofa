@@ -6,12 +6,14 @@ import { Transaction } from "@meshsdk/core";
 import { BLOCKFROST_KEY_NAME } from "@/config";
 import { ErrorAlert } from "./ErrorAlert";
 import SelectWallet from "./SelectWallet";
-import { useDatabase, useAgent } from "@/hooks";
+import { useAgent } from "@trust0/identus-react/hooks";
+
+import { useDatabase } from "@/hooks";
 import { DIDAlias } from "@/utils/types";
 
 export function DIDItem({ didItem, onUpdate }: { didItem: DIDAlias, onUpdate: (did: DIDAlias) => void }) {
     const { wallet, connected } = useWallet();
-    const { db, setWallet, wallet: currentWallet, getSettingsByKey, updateDIDStatus } = useDatabase();
+    const { setWallet, wallet: currentWallet, getSettingsByKey, updateDIDStatus } = useDatabase();
     const { agent } = useAgent();
     const [error, setError] = useState<string | null>(null);
     const [isResolving, setIsResolving] = useState(false);
@@ -21,7 +23,6 @@ export function DIDItem({ didItem, onUpdate }: { didItem: DIDAlias, onUpdate: (d
     const didString = didItem.did.toString();
     const [publishing, setPublishing] = useState(false);
     const [wasPublishing, setWasPublishing] = useState(false);
-
 
     const buildAndSubmitTransaction = useCallback(async (metadataBody: any) => {
         if (!wallet) throw new Error("No wallet connected");

@@ -1,22 +1,11 @@
-import Head from "next/head";
-
-import Layout from "@/components/Layout";
-import PageHeader from "@/components/PageHeader";
 import { OOB } from "@/components/OOB";
-import { useAgent } from "@/hooks";
+import { useConnections } from "@trust0/identus-react/hooks";
+import withLayout from "@/components/withLayout";
 
-export default function ConnectionsPage() {
-    const { connections } = useAgent();
+function ConnectionsPage() {
+    const { connections } = useConnections();
     return (
-        <Layout>
-            <Head>
-                <title>Connections | Identus Agent</title>
-                <meta name="description" content="Manage your connections with other agents" />
-            </Head>
-            <PageHeader
-                title="Connections"
-                description="Manage your connections with other agents and services"
-            />
+       
             <div className="bg-background-light dark:bg-background-dark hadow-sm">
                 <OOB />
                 {
@@ -35,6 +24,13 @@ export default function ConnectionsPage() {
                     })
                 }
             </div>
-        </Layout>
+       
     );
 } 
+
+
+export default withLayout(ConnectionsPage, {
+    title: "Connections",
+    description: "Manage your connections with other agents and services",
+    pageHeader: true
+}); 

@@ -1,15 +1,14 @@
 import type React from "react";
-import Head from "next/head";
-import Layout from "@/components/Layout";
-import PageHeader from "@/components/PageHeader";
 import SDK from "@hyperledger/identus-sdk";
 import { useEffect, useState } from "react";
-import { useAgent, useDatabase } from "@/hooks";
+import { useDatabase } from "@/hooks";
 import { useRouter } from "next/router";
 import AgentRequire from "@/components/AgentRequire";
 import { base64 } from "multiformats/bases/base64";
 import { Message } from "@/components/Message";
 import { Credential } from "@/components/Credential";
+import { useAgent, useIssuer } from "@trust0/identus-react/hooks";
+import withLayout from "@/components/withLayout";
 
 
 function CredentialOffer({ message }: { message: SDK.Domain.Message }) {
@@ -24,8 +23,8 @@ function CredentialOffer({ message }: { message: SDK.Domain.Message }) {
     </AgentRequire>
 }
 
-export default function CredentialsPage() {
-    const { peerDID } = useAgent();
+function CredentialsPage() {
+    const peerDID = null
     const router = useRouter();
     const [credentials, setCredentials] = useState<SDK.Domain.Credential[]>([]);
     const { db, pluto } = useDatabase();
@@ -58,17 +57,7 @@ export default function CredentialsPage() {
     }, [db, pluto]);
 
     return (
-        <Layout>
-            <Head>
-                <title>Credentials | Identus Agent</title>
-                <meta name="description" content="Manage your verifiable credentials" />
-            </Head>
-
-            <PageHeader
-                title="Credentials"
-                description="Manage your verifiable credentials and digital attestations"
-            />
-
+        <>
             {message && <CredentialOffer message={message} />}
 
             {credentials.length > 0 ? (
@@ -90,6 +79,13 @@ export default function CredentialsPage() {
                     </div>
                 </div>
             )}
-        </Layout>
+        </>
     );
 } 
+
+
+export default withLayout(CredentialsPage, {
+    title: "Credentials",
+    description: "Manage your verifiable credentials and digital attestations",
+    pageHeader: true
+}); 

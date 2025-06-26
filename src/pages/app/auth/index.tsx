@@ -1,35 +1,32 @@
 import Head from "next/head";
-import { useEffect, useState } from "react";
-import { useDatabase } from "@/hooks";
+import { useCallback, useState } from "react";
 import AtalaGraphic from "@/components/Identus";
 import Image from "next/image";
 import { StorageType } from "@trust0/ridb";
+import { useDatabase } from "@/hooks";
 
 export default function Auth() {
-    const { error: dbError, start } = useDatabase();
+    const {  start } = useDatabase();
     const [dbName, setDbName] = useState('test-db');
+    const [error, setError] = useState<string | null>(null);
     const [password, setPassword] = useState('123456');
-    const [error, setError] = useState(dbError?.message);
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!dbName.trim()) {
             setError('Database name is required');
             return;
         }
-        start({
-            dbName,
-            password,
-            storageType: StorageType.IndexDB,
-        })
-            .catch((err) => {
-                setError(err.message);
-            })
-    }
-
-    useEffect(() => {
-        setError(dbError?.message);
-    }, [dbError])
+        try {
+            await start({
+                dbName,
+                password,
+                storageType: StorageType.IndexDB,
+            });
+        } catch (err) {
+            setError((err as Error).message);
+        }
+    }, [dbName, password, start])
 
     return (
         <>

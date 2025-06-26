@@ -1,12 +1,10 @@
-import Head from "next/head";
-import Layout from "@/components/Layout";
-import PageHeader from "@/components/PageHeader";
 import { useEffect, useState } from "react";
 import { BLOCKFROST_KEY_NAME, PRISM_RESOLVER_URL_KEY, FEATURES, MEDIATOR_DID } from "@/config";
 import { useDatabase } from "@/hooks";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import withLayout from "@/components/withLayout";
 
-export default function SettingsPage() {
+function SettingsPage() {
     const { state: dbState, getFeatures, getSettingsByKey, storeSettingsByKey } = useDatabase();
     const [blockfrostKey, setBlockfrostKey] = useState("");
     const [resolverUrl, setResolverUrl] = useState("");
@@ -18,10 +16,9 @@ export default function SettingsPage() {
     useEffect(() => {
         async function load() {
             if (dbState === "loaded") {
-                const [blockfrost, prism, features, mediatorDID] = await Promise.all([
+                const [blockfrost, prism, mediatorDID] = await Promise.all([
                     getSettingsByKey(BLOCKFROST_KEY_NAME),
                     getSettingsByKey(PRISM_RESOLVER_URL_KEY),
-                    getSettingsByKey(FEATURES),
                     getSettingsByKey(MEDIATOR_DID)
                 ]);
                 if (blockfrost) {
@@ -29,9 +26,6 @@ export default function SettingsPage() {
                 }
                 if (prism) {
                     setResolverUrl(prism);
-                }
-                if (features) {
-                    setFeatures(features.split(","));
                 }
                 if (mediatorDID) {
                     setMediatorDID(mediatorDID);
@@ -76,16 +70,7 @@ export default function SettingsPage() {
     };
 
     return (
-        <Layout>
-            <Head>
-                <title>Settings | Identus Agent</title>
-                <meta name="description" content="Configure your agent settings" />
-            </Head>
 
-            <PageHeader
-                title="Settings"
-                description="Configure your agent settings for blockchain interactions and DID resolution"
-            />
 
             <div className="space-y-6">
                 <div className="bg-background-light dark:bg-background-dark shadow-sm rounded-lg p-6">
@@ -155,51 +140,6 @@ export default function SettingsPage() {
                                 This URL is required for resolving PRISM DIDs.
                             </p>
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Agent Capabilities
-                            </label>
-                            <div className="space-y-4">
-                                <div className="flex items-start">
-                                    <div className="flex items-center h-5">
-                                        <input
-                                            type="checkbox"
-                                            id="agent"
-                                            checked={features.includes("agent")}
-                                            onChange={(e) => handleFeatureChange("agent", e.target.checked)}
-                                            className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                                        />
-                                    </div>
-                                    <div className="ml-3">
-                                        <label htmlFor="agent" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                            Agent Role
-                                        </label>
-                                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                                            Enables issuance and verification capabilities. You can create and verify credentials.
-                                        </p>
-                                    </div>
-                                </div>
-                                <div className="flex items-start">
-                                    <div className="flex items-center h-5">
-                                        <input
-                                            type="checkbox"
-                                            id="holder"
-                                            checked={features.includes("holder")}
-                                            onChange={(e) => handleFeatureChange("holder", e.target.checked)}
-                                            className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                                        />
-                                    </div>
-                                    <div className="ml-3">
-                                        <label htmlFor="holder" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                            Holder Role
-                                        </label>
-                                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                                            Enables receiving credentials and managing presentations. You can store and present credentials.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                         <div className="flex justify-end">
                             <button
                                 onClick={handleSaveAll}
@@ -218,6 +158,14 @@ export default function SettingsPage() {
                     </div>
                 )}
             </div>
-        </Layout>
+      
     );
 }
+
+
+// Export the component wrapped with layout
+export default withLayout(SettingsPage, {
+    title: "Settings",
+    description: "Configure your agent settings for blockchain interactions and DID resolution",
+    pageHeader: true
+}); 

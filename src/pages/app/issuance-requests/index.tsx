@@ -2,12 +2,14 @@ import Head from "next/head";
 import Layout from "@/components/Layout";
 import PageHeader from "@/components/PageHeader";
 import Link from "next/link";
-import { useAgent, useDatabase } from "@/hooks";
+import { useDatabase } from "@/hooks";
 import { useEffect, useState } from "react";
 import SDK from '@hyperledger/identus-sdk';
 import { v4 as uuidv4 } from 'uuid';
 import { base64ToBytes } from "did-jwt";
 import QRCodeDisplay from "@/components/QRCodeDisplay";
+import withLayout from "@/components/withLayout";
+import { useAgent } from "@trust0/identus-react/hooks";
 
 type IssuanceRequest = {
     id: string;
@@ -23,9 +25,10 @@ type IssuanceRequest = {
     createdAt?: number;
 };
 
-export default function IssuanceRequestsPage() {
+function IssuanceRequestsPage() {
     const { db, error: dbError, getIssuanceFlows } = useDatabase();
-    const { agent, peerDID } = useAgent();
+    const { agent } = useAgent();
+    const peerDID =null;
     const [issuanceRequests, setIssuanceRequests] = useState<IssuanceRequest[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -115,17 +118,7 @@ export default function IssuanceRequestsPage() {
     };
 
     return (
-        <Layout showDIDSelector={true}>
-            <Head>
-                <title>Issuance Requests | Identus Agent</title>
-                <meta name="description" content="Manage credential issuance requests" />
-            </Head>
-
-            <PageHeader
-                title="Issuance Requests"
-                description="Manage and track your credential issuance requests"
-            />
-
+<>
             <div className="bg-background-light dark:bg-background-dark shadow-sm">
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Your Issuance Requests</h2>
@@ -261,6 +254,13 @@ export default function IssuanceRequestsPage() {
                     </div>
                 </div>
             )}
-        </Layout>
+       </>
     );
 } 
+
+export default withLayout(IssuanceRequestsPage, {
+    title: "Issuance Requests",
+    description: "Manage your credential issuance requests",
+    pageHeader: true,
+    showDIDSelector: true
+}); 

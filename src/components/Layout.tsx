@@ -2,17 +2,26 @@
 
 import { ReactNode, useEffect, useState } from 'react';
 import Link from 'next/link';
-import AgentRequire from './AgentRequire';
 import { PrismDIDSelect } from './PrismDIDSelect';
 import { WalletSelect } from './WalletSelect';
 import { AgentStart } from './AgentStart';
-import { useAgent, useDatabase } from '@/hooks';
+import { useDatabase } from '@/hooks';
 import SDK from "@hyperledger/identus-sdk";
 import { useRouter } from 'next/router';
 import Image from 'next/image';
+import Head from 'next/head';
+import { AgentLayout } from './AgentLayout';
+import PageHeader from './PageHeader';
+import { useWallet } from '@meshsdk/react';
+import Loading from './Loading';
+import { PrismDIDProvider } from './providers/PrismDID';
+
 interface LayoutProps {
     children: ReactNode;
     showDIDSelector?: boolean;
+    title?: string;
+    description?: string;
+    pageHeader?: boolean;
 }
 
 interface NavItem {
@@ -48,21 +57,70 @@ const holderRoutes = [
     },
 ];
 
+// export type ResolverClass = new (apollo: SDK.Domain.Apollo) => SDK.Domain.DIDResolver;
 
-export default function Layout({ children, showDIDSelector = false }: LayoutProps) {
-    const { peerDID, state, messages } = useAgent();
-    const { features } = useDatabase();
+
+const DEFAULT_TITLE = 'Hyperledger Identus Agent';
+const DEFAULT_DESCRIPTION = 'Dashboard for managing your self-sovereign identity';
+
+
+export default function Layout({
+    children,
+    showDIDSelector = false,
+    title = DEFAULT_TITLE,
+    description = DEFAULT_DESCRIPTION,
+    pageHeader = true
+}: LayoutProps) {
+    const messages: any = [];
+    const {
+        getMediator,
+        getSeed,
+        getWallet,
+        state: dbState,
+        error: dbError,
+        features
+    } = useDatabase();
 
     const [notificationsOpen, setNotificationsOpen] = useState(false);
     const [agentControlsOpen, setAgentControlsOpen] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const router = useRouter();
     const [showCopyFeedback, setShowCopyFeedback] = useState(false);
+    const router = useRouter();
+    const [loaded, setLoaded] = useState<boolean>(false);
+    const [mediatorDID, setMediatorDID] = useState<SDK.Domain.DID | null>(null);
+    const { connect } = useWallet();
 
     // Close sidebar when route changes
     useEffect(() => {
         setIsSidebarOpen(false);
     }, [router.pathname]);
+
+    useEffect(() => {
+        async function load() {
+            const currentRoute = router.pathname;
+            if (dbState === 'loaded' && !dbError) {
+                const seed = await getSeed();
+                if (currentRoute !== "/app/mnemonics" && !seed) {
+                    router.replace("/app/mnemonics");
+                    return
+                }
+                const storedMediatorDID = await getMediator();
+                if (currentRoute !== "/app/mediator" && seed && !storedMediatorDID) {
+                    router.replace("/app/mediator");
+                    return
+                }
+                const walletId = await getWallet();
+                if (walletId) {
+                    await connect(walletId);
+                }
+                if (storedMediatorDID) {
+                    setMediatorDID(storedMediatorDID);
+                }
+            }
+        }
+        load().then(() => setLoaded(true))
+    }, [dbState, dbError, getMediator, getSeed, getWallet, connect, router]);
+
 
     const navItems: NavigationItem[] = [
         { path: '/app', label: 'Home' },
@@ -84,8 +142,6 @@ export default function Layout({ children, showDIDSelector = false }: LayoutProp
         navItems.push(...holderRoutes);
     }
 
-
-
     navItems.push(...[{
         label: 'DIDComm',
         children: [
@@ -104,14 +160,28 @@ export default function Layout({ children, showDIDSelector = false }: LayoutProp
         setNotificationsOpen(!notificationsOpen);
     };
 
-    const unreadMessages = messages.filter(({ read }) => !read);
+    const unreadMessages = messages.filter(({ read }: any) => !read);
     const unreadCount = unreadMessages.length;
     // Type guard to check if item is a NavGroup
     const isNavGroup = (item: NavigationItem): item is NavGroup => 'children' in item;
 
+    // eslint-disable-next-line prefer-const
+    let peerDID: any = null;
+    // eslint-disable-next-line prefer-const
+    let state: any = null;
 
-    return (
-        <AgentRequire>
+
+    if (!loaded) {
+        return <Loading />
+    }
+
+
+    return <>
+        <Head>
+            <title>{title}</title>
+            <meta name="description" content={description} />
+        </Head>
+        <AgentLayout>
             <div className="flex flex-col h-screen bg-background-light dark:bg-background-dark">
                 {/* Header */}
                 <header className="border-b border-border-light dark:border-border-dark shadow-sm">
@@ -146,7 +216,7 @@ export default function Layout({ children, showDIDSelector = false }: LayoutProp
                                         <div className="max-h-96 overflow-y-auto">
                                             {unreadMessages.length > 0 ? (
                                                 <div>
-                                                    {unreadMessages.map((notification) => {
+                                                    {unreadMessages.map((notification: any) => {
                                                         return <div
                                                             key={notification.message.id}
                                                             className={`px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 ${!notification.read ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
@@ -310,10 +380,21 @@ export default function Layout({ children, showDIDSelector = false }: LayoutProp
                     </aside>
                     {/* Main content */}
                     <main className="flex-1 p-4 lg:p-8 overflow-y-auto">
-                        {children}
+                        {
+                            pageHeader && (
+                                <PageHeader
+                                    title={title}
+                                    description={description}
+                                />
+                            )
+                        }
+                        <PrismDIDProvider did={mediatorDID}>
+                            {children}
+                        </PrismDIDProvider>
                     </main>
                 </div>
             </div>
-        </AgentRequire>
-    );
+        </AgentLayout>
+
+    </>
 }

@@ -1,6 +1,6 @@
-import { useAgent } from "@/hooks";
 
 import SDK from "@hyperledger/identus-sdk";
+import { useAgent } from "@trust0/identus-react/hooks";
 
 
 

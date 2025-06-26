@@ -9,14 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@hyperledger/identus-sdk": "file:../../",
+    "@hyperledger/identus-sdk": "^7.0.0-rc.5",
     "@meshsdk/core": "^1.9.0-beta.1",
     "@meshsdk/react": "^1.9.0-beta.1",
     "@paulmillr/qr": "^0.3.0",
-    "@trust0/identus-store": "^1.0.0",
-    "@trust0/ridb": "^1.5.27",
-    "@trust0/ridb-core": "^1.7.22",
-    "@trust0/ridb-react": "^1.2.31",
+    "@stablelib/uuid": "^2.0.1",
+    "@trust0/identus-react": "^0.0.13",
+    "@trust0/identus-store": "^1.0.5",
+    "@trust0/ridb": "^1.5.28",
+    "@trust0/ridb-core": "^1.7.23",
+    "@trust0/ridb-react": "^1.4.6",
+    "bn.js": "^5.2.2",
     "framer-motion": "^12.10.1",
     "next": "15.3.2",
     "postcss": "^8.5.3",
@@ -27,6 +30,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@types/bn.js": "^5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-beautiful-dnd": "^13.1.8",
@@ -37,5 +41,6 @@
     "postcss-import": "^16.1.0",
     "tailwindcss": "^3.4.17",
     "typescript": "^5"
-  }
+  },
+  "packageManager": "yarn@4.9.1+sha512.f95ce356460e05be48d66401c1ae64ef84d163dd689964962c6888a9810865e39097a5e9de748876c2e0bf89b232d583c33982773e9903ae7a76257270986538"
 }

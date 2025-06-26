@@ -1,6 +1,6 @@
 import SDK from "@hyperledger/identus-sdk";
 import React from "react";
-import { useAgent } from "@/hooks";
+import { useAgent, useConnections } from "@trust0/identus-react/hooks";
 import { Popup } from "./Popup";
 
 interface ErrorState {
@@ -10,7 +10,8 @@ interface ErrorState {
 }
 
 export const OOB: React.FC = () => {
-    const { agent, connections } = useAgent();
+    const { agent } = useAgent();
+    const { connections } = useConnections();
     const [oob, setOOB] = React.useState<string>("");
     const [alias, setAlias] = React.useState<string>("");
     const [isPopupOpen, setIsPopupOpen] = React.useState(false);

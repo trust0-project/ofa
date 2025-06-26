@@ -3,13 +3,15 @@
 import Head from "next/head";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import { useDatabase } from "@/hooks";
+import { useApollo } from "@trust0/identus-react/hooks";
 import AgentRequire from "@/components/AgentRequire";
-import { useDatabase, useApollo } from "@/hooks";
 
 export default function Mnemonics() {
     const apollo = useApollo();
     const router = useRouter();
     const { setSeed } = useDatabase();
+    
     const [mnemonics, setMnemonics] = useState<string[]>([]);
 
     useEffect(() => {

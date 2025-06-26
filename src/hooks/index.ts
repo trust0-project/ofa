@@ -1,18 +1,7 @@
 import { useCallback, useContext, useMemo } from "react";
-import SDK from "@hyperledger/identus-sdk";
 
-import { AgentContext, DatabaseContext, PrismDIDContext, ThemeContext } from "@/context";
-import { FEATURES } from "@/config";
+import {  DatabaseContext, PrismDIDContext, ThemeContext } from "@/context";
 
-export function useApollo() {
-    const apollo = useMemo(() => new SDK.Apollo(), []);
-    return apollo;
-}
-
-export function useCastor(apollo: SDK.Apollo) {
-    const castor = useMemo(() => new SDK.Castor(apollo, []), [apollo]);
-    return castor;
-}
 
 export function usePrismDID() {
     const context = useContext(PrismDIDContext);
@@ -38,13 +27,7 @@ export function useDatabase() {
     return context;
 }
 
-export function useAgent() {
-    const context = useContext(AgentContext);
-    if (!context) {
-        throw new Error('useAgent must be used within a AgentProvider');
-    }
-    return context;
-}
+
 
 export function usePermissions() {
     const { features } = useDatabase();

@@ -1,8 +1,8 @@
-import { useAgent } from "@/hooks";
+import { useMessages } from "@trust0/identus-react/hooks";
 import SDK from "@hyperledger/identus-sdk";
 
 export function useMessageStatus(message: SDK.Domain.Message) {
-    const { messages } = useAgent();
+    const { messages } = useMessages();
 
     const messageThid = messages.find(({ message: appMessage }) => {
         if (!message.thid || !appMessage.thid) {

@@ -1,6 +1,6 @@
 import SDK from "@hyperledger/identus-sdk";
 import { useEffect, useState } from "react";
-import { useAgent } from "@/hooks";
+import { useAgent } from "@trust0/identus-react/hooks";
 import { useMessageStatus } from "./utils";
 
 export function BasicMessage(props: { message: SDK.Domain.Message }) {

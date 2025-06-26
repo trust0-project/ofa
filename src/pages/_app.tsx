@@ -3,14 +3,12 @@
 import type { AppProps } from 'next/app';
 import { Geist, Geist_Mono } from "next/font/google";
 import { MeshProvider } from '@meshsdk/react';
-import { RIDBDatabase } from '@trust0/ridb-react';
 
 import "../styles/globals.css";
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
-import { AgentProvider } from '@/components/providers/Agent';
-import { schemas } from '@/utils/db/schemas';
+import { RIDBDatabase } from '@trust0/ridb-react';
 import { DatabaseProvider } from '@/components/providers/Database';
-
+import { migrations, schemas } from '@trust0/identus-react/db';
 const geistSans = Geist({
     variable: "--font-geist-sans",
     subsets: ["latin"],
@@ -27,11 +25,9 @@ export default function App({ Component, pageProps }: AppProps) {
             <main className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
                 <ThemeProvider>
                     <MeshProvider>
-                        <RIDBDatabase schemas={schemas}>
+                        <RIDBDatabase schemas={schemas} migrations={migrations as any}>
                             <DatabaseProvider>
-                                <AgentProvider>
-                                    <Component {...pageProps} />
-                                </AgentProvider>
+                                <Component {...pageProps} />
                             </DatabaseProvider>
                         </RIDBDatabase>
                     </MeshProvider>
