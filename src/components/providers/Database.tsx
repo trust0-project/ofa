@@ -7,13 +7,12 @@ import { FEATURES, MEDIATOR_DID, PRISM_RESOLVER_URL_KEY, WALLET_NAME } from "@/c
 import { DatabaseState } from "@/utils/types";
 import { useWallet } from "@meshsdk/react";
 import { useRIDB } from "@trust0/ridb-react";
-import { RIDB, StartOptions, StorageType } from "@trust0/ridb";
+import { RIDB, StartOptions } from "@trust0/ridb";
 import { uuid } from "@stablelib/uuid";
 import { GroupedDIDs } from "@/utils/types";
 import { Doc } from "@trust0/ridb-core";
-import { createStore } from "@trust0/identus-store";
 import {schemas} from '@trust0/identus-react/db'
-import { useApollo } from "@trust0/identus-react/hooks";
+import { useApollo, usePluto } from "@trust0/identus-react/hooks";
 
 const hasDB = (db: RIDB<typeof schemas> | null):
     db is RIDB<typeof schemas> => db !== null;
@@ -33,12 +32,8 @@ export function DatabaseProvider({ children }: { children: React.ReactNode }) {
     const [error, setError] = useState<Error | null>(null);
     const [features, setFeatures] = useState<string[]>([]);
     const [currentWallet, setCurrentWallet] = useState<string | null>(null);
-
     const currentRoute = router.pathname;
-
-    const store = createStore({ db, storageType: StorageType.IndexDB });
-    const pluto = new SDK.Pluto(store, apollo);
-
+    const pluto = usePluto()
     const getMessages = useCallback(async () => {
         if (!hasDB(db)) {
             throw new Error("Database not connected");
