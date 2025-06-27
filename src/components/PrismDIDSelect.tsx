@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import SDK from "@hyperledger/identus-sdk";
-import { usePrismDID, useDatabase } from "@/hooks";
+import { useDatabase, usePrismDID } from "@trust0/identus-react/hooks";
 
 
 
 
-export function PrismDIDSelect() {
+export function PrismDIDSelect({onChange}: {onChange: (did: SDK.Domain.DID) => void}) {
     const { db, getExtendedDIDs } = useDatabase();
+    const { prismDID: selectedDID } = usePrismDID();
     const [dids, setDIDs] = useState<Pick<SDK.Domain.PrismDID, "did" | "alias">[]>([]);
-    const { did: selectedDID, setDID } = usePrismDID();
 
     useEffect(() => {
         if (db) {
@@ -35,7 +35,7 @@ export function PrismDIDSelect() {
 
     return <select
         value={selectedDID?.toString() ?? ""}
-        onChange={(e) => setDID(e.target.value)}
+        onChange={(e) => onChange(SDK.Domain.DID.fromString(e.target.value))}
         className="block w-56 bg-input-background-light dark:bg-input-background-dark border border-input-border-light dark:border-input-border-dark rounded-md py-2 px-3 text-sm leading-tight focus:outline-none focus:ring-2 focus:ring-button-primary-light dark:focus:ring-button-primary-dark focus:border-button-primary-light dark:focus:border-button-primary-dark transition-colors duration-200"
     >
         {dids.map(({ did, alias }) => {

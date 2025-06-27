@@ -4,7 +4,6 @@ import Layout from './Layout';
 interface LayoutOptions {
     title?: string;
     description?: string;
-    showDIDSelector?: boolean;
     pageHeader?: boolean;
 }
 

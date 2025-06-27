@@ -1,6 +1,6 @@
 import SDK from "@hyperledger/identus-sdk";
 import { useAgent } from "@trust0/identus-react/hooks";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useMessageStatus } from "./utils";
 import { useEffect, useState } from "react";
 

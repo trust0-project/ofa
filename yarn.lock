@@ -2671,9 +2671,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@trust0/identus-react@npm:^0.0.26":
-  version: 0.0.26
-  resolution: "@trust0/identus-react@npm:0.0.26"
+"@trust0/identus-react@npm:^0.0.30":
+  version: 0.0.30
+  resolution: "@trust0/identus-react@npm:0.0.30"
   dependencies:
     "@trust0/identus-store": "npm:^1.0.5"
     "@trust0/ridb": "npm:^1.5.28"
@@ -2687,7 +2687,7 @@ __metadata:
     "@hyperledger/identus-sdk": ^7.0.0-rc.5
     react: ^18
     react-dom: ^18
-  checksum: 10c0/5968e275fd0907b15326c432a3890e59c58856aeb495b3a71c05826c7aceea170022e716357e73c9e5b1e2ea59ddc2ae74cb783eafbffb70541c463faadf86a8
+  checksum: 10c0/4171201083bb769a288ffa30c0359bd151ed75a178ac6f867bb0245a817ee053e93c78d6a9638c0c3d4976f30141bd0fd0758a141f31f03fae192991ca1ff708
   languageName: node
   linkType: hard
 
@@ -8588,7 +8588,7 @@ __metadata:
     "@meshsdk/react": "npm:^1.9.0-beta.1"
     "@paulmillr/qr": "npm:^0.3.0"
     "@stablelib/uuid": "npm:^2.0.1"
-    "@trust0/identus-react": "npm:^0.0.26"
+    "@trust0/identus-react": "npm:^0.0.30"
     "@trust0/identus-store": "npm:^1.0.5"
     "@trust0/ridb": "npm:^1.5.28"
     "@trust0/ridb-core": "npm:^1.7.23"

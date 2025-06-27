@@ -6,9 +6,8 @@ import { Transaction } from "@meshsdk/core";
 import { BLOCKFROST_KEY_NAME } from "@/config";
 import { ErrorAlert } from "./ErrorAlert";
 import SelectWallet from "./SelectWallet";
-import { useAgent } from "@trust0/identus-react/hooks";
+import { useAgent, useDatabase } from "@trust0/identus-react/hooks";
 
-import { useDatabase } from "@/hooks";
 import { DIDAlias } from "@/utils/types";
 
 export function DIDItem({ didItem, onUpdate }: { didItem: DIDAlias, onUpdate: (did: DIDAlias) => void }) {

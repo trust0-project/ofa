@@ -3,7 +3,7 @@
 import Head from "next/head";
 import Image from "next/image";
 import LOGO from "../../public/identus-navbar-light.png";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
     const router = useRouter();

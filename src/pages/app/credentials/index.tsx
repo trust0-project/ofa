@@ -1,9 +1,11 @@
 import type React from "react";
 import SDK from "@hyperledger/identus-sdk";
 import { useEffect, useState } from "react";
-import { useDatabase } from "@/hooks";
-import { useRouter } from "next/router";
+import { useDatabase } from "@trust0/identus-react/hooks";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import AgentRequire from "@/components/AgentRequire";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { base64 } from "multiformats/bases/base64";
 import { Message } from "@/components/Message";
 import { Credential } from "@/components/Credential";
@@ -26,13 +28,15 @@ function CredentialOffer({ message }: { message: SDK.Domain.Message }) {
 function CredentialsPage() {
     const peerDID = null
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
     const [credentials, setCredentials] = useState<SDK.Domain.Credential[]>([]);
     const { db, pluto } = useDatabase();
     const [message, setMessage] = useState<SDK.Domain.Message | undefined>();
 
     useEffect(() => {
-        if (router.isReady && peerDID) {
-            const { oob } = router.query;
+        if (peerDID) {
+            const oob = searchParams.get('oob');
             if (oob) {
                 const decoded = base64.baseDecode(oob as string);
                 const message = SDK.Domain.Message.fromJson(Buffer.from(decoded).toString());
@@ -44,11 +48,10 @@ function CredentialsPage() {
                 }));
 
                 // Clean the URL after processing the message
-                const { pathname } = router;
-                router.replace(pathname, undefined, { shallow: true });
+                router.replace(pathname);
             }
         }
-    }, [router.isReady, router.query, peerDID, router]);
+    }, [searchParams, peerDID, router, pathname]);
 
     useEffect(() => {
         if (db) {

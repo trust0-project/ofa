@@ -1,6 +1,7 @@
-import { useCallback, useContext, useMemo } from "react";
+import { useCallback, useContext } from "react";
 
-import {  DatabaseContext, PrismDIDContext, ThemeContext } from "@/context";
+import { PrismDIDContext, RouterContext, ThemeContext } from "@/context";
+import { useDatabase } from "@trust0/identus-react/hooks";
 
 
 export function usePrismDID() {
@@ -19,14 +20,13 @@ export function useTheme() {
     return context;
 }
 
-export function useDatabase() {
-    const context = useContext(DatabaseContext);
-    if (!context) {
-        throw new Error('useDatabase must be used within a DatabaseProvider');
+export function useRouter() {
+    const context = useContext(RouterContext);
+    if (context === undefined) {
+        throw new Error('useRouter must be used within a RouterProvider');
     }
     return context;
 }
-
 
 
 export function usePermissions() {

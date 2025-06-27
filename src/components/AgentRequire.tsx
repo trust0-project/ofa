@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import SDK from '@hyperledger/identus-sdk';
-import { useRouter } from 'next/router';
 import Loading from './Loading';
 import { useWallet } from "@meshsdk/react";
-import { useDatabase } from '@/hooks';
-import { PrismDIDProvider } from './providers/PrismDID';
+import { usePathname, useRouter } from 'next/navigation';
+import { useDatabase } from '@trust0/identus-react/hooks';
 
 interface RequireDBProps {
     children: React.ReactNode;
@@ -18,7 +17,7 @@ export default function AgentRequire({ children }: RequireDBProps) {
     const [mediatorDID, setMediatorDID] = useState<SDK.Domain.DID | null>(null);
     const { connect } = useWallet();
 
-    const currentRoute = router.pathname;
+    const currentRoute = usePathname();
     useEffect(() => {
         async function load() {
             if (dbState === 'loaded' && !dbError) {
@@ -48,5 +47,5 @@ export default function AgentRequire({ children }: RequireDBProps) {
         return <Loading />
     }
 
-    return <PrismDIDProvider did={mediatorDID}>{children}</PrismDIDProvider>
+    return children
 } 

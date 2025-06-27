@@ -3,10 +3,10 @@
 import Head from "next/head";
 import { useState } from "react";
 import SDK from "@hyperledger/identus-sdk";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import AgentRequire from "@/components/AgentRequire";
 import { MEDIATOR_DID } from "@/config";
-import { useDatabase } from "@/hooks";
+import { useDatabase } from "@trust0/identus-react/hooks";
 
 export default function Mediator() {
     const { storeSettingsByKey } = useDatabase();

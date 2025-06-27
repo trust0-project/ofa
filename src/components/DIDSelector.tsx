@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useDatabase } from "@/hooks";
+import { useDatabase } from "@trust0/identus-react/hooks";
 import { DIDAlias, GroupedDIDs } from "@/utils/types";
 
 interface DIDSelectorProps {

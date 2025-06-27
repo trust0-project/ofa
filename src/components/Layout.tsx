@@ -1,24 +1,23 @@
 'use client';
 
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { PrismDIDSelect } from './PrismDIDSelect';
 import { WalletSelect } from './WalletSelect';
 import { AgentStart } from './AgentStart';
-import { useDatabase } from '@/hooks';
 import SDK from "@hyperledger/identus-sdk";
-import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Head from 'next/head';
-import { AgentLayout } from './AgentLayout';
 import PageHeader from './PageHeader';
 import { useWallet } from '@meshsdk/react';
 import Loading from './Loading';
-import { PrismDIDProvider } from './providers/PrismDID';
+import { AgentGaugeSVG } from './AgentGaugeSVG';
+import { PeerDIDCopy } from './PeerDIDCopy';
 
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useDatabase } from '@trust0/identus-react/hooks';
+import { useRouter as useCustomRouter } from '@/hooks';
 interface LayoutProps {
     children: ReactNode;
-    showDIDSelector?: boolean;
     title?: string;
     description?: string;
     pageHeader?: boolean;
@@ -66,7 +65,6 @@ const DEFAULT_DESCRIPTION = 'Dashboard for managing your self-sovereign identity
 
 export default function Layout({
     children,
-    showDIDSelector = false,
     title = DEFAULT_TITLE,
     description = DEFAULT_DESCRIPTION,
     pageHeader = true
@@ -78,27 +76,44 @@ export default function Layout({
         getWallet,
         state: dbState,
         error: dbError,
-        features
+        features,
+        db
     } = useDatabase();
 
     const [notificationsOpen, setNotificationsOpen] = useState(false);
     const [agentControlsOpen, setAgentControlsOpen] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [showCopyFeedback, setShowCopyFeedback] = useState(false);
     const router = useRouter();
     const [loaded, setLoaded] = useState<boolean>(false);
-    const [mediatorDID, setMediatorDID] = useState<SDK.Domain.DID | null>(null);
     const { connect } = useWallet();
+    const searchParams = useSearchParams();
+    const { setRedirectUrl } = useCustomRouter();
+
+    const currentRoute = usePathname();
+    
+    // Get the full URL path including search parameters (equivalent to router.asPath)
+    const getFullPath = useCallback(() => {
+        const search = searchParams.toString();
+        return search ? `${currentRoute}?${search}` : currentRoute;
+    }, [currentRoute, searchParams]);
 
     // Close sidebar when route changes
     useEffect(() => {
         setIsSidebarOpen(false);
-    }, [router.pathname]);
+    }, [currentRoute]);
 
     useEffect(() => {
         async function load() {
-            const currentRoute = router.pathname;
-            if (dbState === 'loaded' && !dbError) {
+            if (dbState === "disconnected") {
+                if (currentRoute !== "/app/auth") {
+                    const fullUrl = getFullPath();
+                    setRedirectUrl(fullUrl);
+                }
+                if (currentRoute !== "/app/auth") {
+                    router.replace("/app/auth");
+                    return 
+                }
+            } else if (dbState === 'loaded' && !dbError) {
                 const seed = await getSeed();
                 if (currentRoute !== "/app/mnemonics" && !seed) {
                     router.replace("/app/mnemonics");
@@ -113,19 +128,16 @@ export default function Layout({
                 if (walletId) {
                     await connect(walletId);
                 }
-                if (storedMediatorDID) {
-                    setMediatorDID(storedMediatorDID);
-                }
             }
+            
         }
-        load().then(() => setLoaded(true))
-    }, [dbState, dbError, getMediator, getSeed, getWallet, connect, router]);
-
+        load().then(() => setTimeout(() => setLoaded(true), 100))
+    }, [dbState, dbError, getMediator, getSeed, getWallet, connect, router, currentRoute, getFullPath, setRedirectUrl]);
+    
 
     const navItems: NavigationItem[] = [
         { path: '/app', label: 'Home' },
     ];
-
 
     navItems.push(...[{
         label: 'DIDs',
@@ -156,32 +168,21 @@ export default function Layout({
         ]
     }]);
 
-    const toggleNotifications = () => {
-        setNotificationsOpen(!notificationsOpen);
-    };
 
     const unreadMessages = messages.filter(({ read }: any) => !read);
     const unreadCount = unreadMessages.length;
     // Type guard to check if item is a NavGroup
     const isNavGroup = (item: NavigationItem): item is NavGroup => 'children' in item;
-
     // eslint-disable-next-line prefer-const
-    let peerDID: any = null;
-    // eslint-disable-next-line prefer-const
-    let state: any = null;
-
-
     if (!loaded) {
         return <Loading />
     }
-
 
     return <>
         <Head>
             <title>{title}</title>
             <meta name="description" content={description} />
         </Head>
-        <AgentLayout>
             <div className="flex flex-col h-screen bg-background-light dark:bg-background-dark">
                 {/* Header */}
                 <header className="border-b border-border-light dark:border-border-dark shadow-sm">
@@ -258,35 +259,7 @@ export default function Layout({
                                     <div className="py-2">
                                         <div className="flex px-4 py-2 border-b border-border-light dark:border-border-dark justify-between items-center">
                                             <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200">Agent Controls</h3>
-                                            {
-                                                peerDID && (
-                                                    <button
-                                                        onClick={() => {
-                                                            navigator.clipboard.writeText(peerDID.toString());
-                                                            setShowCopyFeedback(true);
-                                                            setTimeout(() => setShowCopyFeedback(false), 2000);
-                                                        }}
-                                                        className={`text-xs sm:text-sm text-blue-500 transition-transform duration-300 flex items-center gap-2 ${showCopyFeedback ? 'text-green-500' : ''}`}
-                                                    >
-                                                        {showCopyFeedback ? (
-                                                            <>
-                                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                                                </svg>
-                                                                Copied!
-                                                            </>
-                                                        ) : (
-                                                            <>
-                                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                                                    <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
-                                                                    <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
-                                                                </svg>
-                                                                Copy DID
-                                                            </>
-                                                        )}
-                                                    </button>
-                                                )
-                                            }
+                                            <PeerDIDCopy type="peerDID" />
                                         </div>
                                         <div className="p-4 space-y-4">
                                             <div className="flex flex-col items-end">
@@ -295,12 +268,6 @@ export default function Layout({
                                             <div className="flex flex-col items-end">
                                                 <WalletSelect />
                                             </div>
-                                            {showDIDSelector && (
-                                                <div className="flex flex-col items-end">
-                                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">DID</label>
-                                                    <PrismDIDSelect />
-                                                </div>
-                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -309,21 +276,7 @@ export default function Layout({
                                     className="flex items-center justify-center p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 border border-gray-300 dark:border-gray-600"
                                     aria-label="Agent Controls"
                                 >
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className={`h-5 w-5 ${state === SDK.Domain.Startable.State.RUNNING
-                                            ? 'text-green-500 dark:text-green-400'
-                                            : state === SDK.Domain.Startable.State.STOPPED
-                                                ? 'text-red-500 dark:text-red-400'
-                                                : 'text-yellow-500 dark:text-yellow-400'
-                                            }`}
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                    >
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    </svg>
+                                    <AgentGaugeSVG />
                                 </button>
                             </div>
 
@@ -351,7 +304,7 @@ export default function Layout({
                                                         <li key={`${item.label}-${childIndex}`}>
                                                             <Link
                                                                 href={child.path}
-                                                                className={`text-sm px-4 py-2 block ${router.pathname === child.path
+                                                                className={`text-sm px-4 py-2 block ${currentRoute === child.path
                                                                     ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
                                                                     : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                                                                     }`}
@@ -365,7 +318,7 @@ export default function Layout({
                                         ) : (
                                             <Link
                                                 href={item.path}
-                                                className={`text-sm px-4 py-2 block ${router.pathname === item.path
+                                                className={`text-sm px-4 py-2 block ${currentRoute === item.path
                                                     ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
                                                     : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                                                     }`}
@@ -388,13 +341,10 @@ export default function Layout({
                                 />
                             )
                         }
-                        <PrismDIDProvider did={mediatorDID}>
                             {children}
-                        </PrismDIDProvider>
                     </main>
                 </div>
             </div>
-        </AgentLayout>
 
     </>
 }

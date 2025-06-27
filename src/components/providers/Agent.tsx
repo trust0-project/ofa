@@ -3,7 +3,7 @@
 
 // import { AgentContext } from "@/context";
 // import { ResolverClass, createResolver } from "@/utils/resolvers";
-// import { useDatabase } from "@/hooks";
+// import { useDatabase } from "@trust0/identus-react/hooks";
 
 // export function AgentProvider({ children }: { children: React.ReactNode }) {
 //     const {

@@ -6,9 +6,9 @@ import { MeshProvider } from '@meshsdk/react';
 
 import "../styles/globals.css";
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
-import { RIDBDatabase } from '@trust0/ridb-react';
-import { DatabaseProvider } from '@/components/providers/Database';
-import { migrations, schemas } from '@trust0/identus-react/db';
+import { AgentProvider } from '@trust0/identus-react';
+import { RouterProvider } from '@/components/providers/Router';
+
 const geistSans = Geist({
     variable: "--font-geist-sans",
     subsets: ["latin"],
@@ -25,11 +25,11 @@ export default function App({ Component, pageProps }: AppProps) {
             <main className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
                 <ThemeProvider>
                     <MeshProvider>
-                        <RIDBDatabase schemas={schemas} migrations={migrations as any}>
-                            <DatabaseProvider>
+                        <RouterProvider>
+                            <AgentProvider>
                                 <Component {...pageProps} />
-                            </DatabaseProvider>
-                        </RIDBDatabase>
+                            </AgentProvider>
+                        </RouterProvider>
                     </MeshProvider>
                 </ThemeProvider>
             </main>

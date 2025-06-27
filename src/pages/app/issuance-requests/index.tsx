@@ -2,7 +2,7 @@ import Head from "next/head";
 import Layout from "@/components/Layout";
 import PageHeader from "@/components/PageHeader";
 import Link from "next/link";
-import { useDatabase } from "@/hooks";
+import { useDatabase } from "@trust0/identus-react/hooks";
 import { useEffect, useState } from "react";
 import SDK from '@hyperledger/identus-sdk';
 import { v4 as uuidv4 } from 'uuid';
@@ -26,7 +26,7 @@ type IssuanceRequest = {
 };
 
 function IssuanceRequestsPage() {
-    const { db, error: dbError, getIssuanceFlows } = useDatabase();
+    const { db, error: dbError, getIssuanceFlows, state: dbState } = useDatabase();
     const { agent } = useAgent();
     const peerDID =null;
     const [issuanceRequests, setIssuanceRequests] = useState<IssuanceRequest[]>([]);
@@ -38,7 +38,7 @@ function IssuanceRequestsPage() {
     const [selectedRequest, setSelectedRequest] = useState<IssuanceRequest | null>(null);
 
     useEffect(() => {
-        if (db) {
+        if (dbState === 'loaded') {
             setIsLoading(true);
             getIssuanceFlows()
                 .then((data) => {
@@ -51,7 +51,7 @@ function IssuanceRequestsPage() {
                     setIsLoading(false);
                 });
         }
-    }, [db, getIssuanceFlows]);
+    }, [getIssuanceFlows, dbState]);
 
     const openPopup = async (request: IssuanceRequest) => {
         if (!agent || !peerDID) return;
@@ -261,6 +261,5 @@ function IssuanceRequestsPage() {
 export default withLayout(IssuanceRequestsPage, {
     title: "Issuance Requests",
     description: "Manage your credential issuance requests",
-    pageHeader: true,
-    showDIDSelector: true
+    pageHeader: true
 }); 

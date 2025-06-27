@@ -1,5 +1,5 @@
 import { ErrorAlert } from "@/components/ErrorAlert";
-import { useRouter } from "next/router";
+import {  useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Message } from "@/components/Message";
 import { useMessages } from "@trust0/identus-react/hooks";
@@ -7,8 +7,8 @@ import withLayout from "@/components/withLayout";
 
 function MessageDetails() {
     const { messages, readMessage } = useMessages();
-    const router = useRouter();
-    const { id } = router.query;
+    const query = useSearchParams();
+    const id = query.get("id");
     const [error, setError] = useState<string | null>(null);
 
     const message = messages.find((message) => message.message.id === id);

@@ -22,16 +22,6 @@ function Dashboard() {
             )
         },
         {
-            title: "Keys",
-            description: "Manage cryptographic keys",
-            path: "/app/keys",
-            icon: (
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-                </svg>
-            )
-        },
-        {
             title: "Issuance Requests",
             description: "Manage credential issuance requests",
             path: "/app/issuance-requests",

@@ -1,16 +1,13 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { useState } from "react";
-import Head from "next/head";
-import Layout from "@/components/Layout";
-import PageHeader from "@/components/PageHeader";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 import { DIDSelector } from "@/components/DIDSelector";
 import { DIDAlias } from "@/utils/types";
 import SDK from "@hyperledger/identus-sdk";
 import { DragDropContext, Droppable, Draggable, DropResult, DroppableProvided, DraggableProvided } from "react-beautiful-dnd";
 import { motion, AnimatePresence } from "framer-motion";
-import { useDatabase } from "@/hooks";
+import { useDatabase } from "@trust0/identus-react/hooks";
 import withLayout from "@/components/withLayout";
 
 type Claim = {
@@ -408,6 +405,5 @@ function CreateIssuanceRequestPage() {
 export default withLayout(CreateIssuanceRequestPage, {
     title: "Create Issuance Request",
     description: "Create a new credential issuance request",
-    pageHeader: true,
-    showDIDSelector: true
+    pageHeader: true
 }); 

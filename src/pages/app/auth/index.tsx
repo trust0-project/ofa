@@ -3,13 +3,17 @@ import { useCallback, useState } from "react";
 import AtalaGraphic from "@/components/Identus";
 import Image from "next/image";
 import { StorageType } from "@trust0/ridb";
-import { useDatabase } from "@/hooks";
+import { useDatabase } from "@trust0/identus-react/hooks";
+import { useRouter as useCustomRouter } from "@/hooks";
+import { useRouter } from "next/navigation";
 
 export default function Auth() {
-    const {  start } = useDatabase();
+    const { start } = useDatabase();
     const [dbName, setDbName] = useState('test-db');
     const [error, setError] = useState<string | null>(null);
     const [password, setPassword] = useState('123456');
+    const {redirectUrl } = useCustomRouter();
+    const router = useRouter();
 
     const handleSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -23,10 +27,13 @@ export default function Auth() {
                 password,
                 storageType: StorageType.IndexDB,
             });
+
+            router.replace(redirectUrl || "/app");
+
         } catch (err) {
             setError((err as Error).message);
         }
-    }, [dbName, password, start])
+    }, [dbName, password, start, redirectUrl, router])
 
     return (
         <>

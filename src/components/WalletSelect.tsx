@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { BrowserWallet, Wallet } from "@meshsdk/core";
 import { useWallet } from "@meshsdk/react";
-import { useDatabase } from "@/hooks";
+import { useDatabase } from "@trust0/identus-react/hooks";
 import Image from "next/image";
 
 export function WalletSelect() {

@@ -1,12 +1,9 @@
-import Head from "next/head";
-import Layout from "@/components/Layout";
 import { useCallback, useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
-import PageHeader from "@/components/PageHeader";
 import { DIDItem } from "@/components/DIDItem";
 import { ErrorAlert } from "@/components/ErrorAlert";
-import { useDatabase } from "@/hooks";
+import { useDatabase } from "@trust0/identus-react/hooks";
 import { GroupedDIDs } from "@/utils/types";
 import withLayout from "@/components/withLayout";
 

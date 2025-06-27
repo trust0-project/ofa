@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { BLOCKFROST_KEY_NAME, PRISM_RESOLVER_URL_KEY, FEATURES, MEDIATOR_DID } from "@/config";
-import { useDatabase } from "@/hooks";
+import { useDatabase } from "@trust0/identus-react/hooks";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import withLayout from "@/components/withLayout";
 

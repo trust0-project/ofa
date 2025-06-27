@@ -26,24 +26,24 @@ export function createResolver(baseUrl: string): ResolverClass {
             }
             const data = await response.json();
             const didDocument = data;
-            const servicesProperty = new SDK.Domain.Services(
+            const servicesProperty = new SDK.Domain.DIDDocument.Services(
                 didDocument.service ?? []
             )
-            const verificationMethodsProperty = new SDK.Domain.VerificationMethods(
+            const verificationMethodsProperty = new SDK.Domain.DIDDocument.VerificationMethods(
                 didDocument.verificationMethod ?? []
             )
-            const coreProperties: SDK.Domain.DIDDocumentCoreProperty[] = [];
-            const authenticate: SDK.Domain.Authentication[] = [];
-            const assertion: SDK.Domain.AssertionMethod[] = [];
+            const coreProperties: SDK.Domain.DIDDocument.CoreProperty[] = [];
+            const authenticate: SDK.Domain.DIDDocument.Authentication[] = [];
+            const assertion: SDK.Domain.DIDDocument.AssertionMethod[] = [];
 
             for (const verificationMethod of didDocument.verificationMethod) {
                 const isAssertion = didDocument.assertionMethod?.find((method: string) => method === verificationMethod.id)
                 if (isAssertion) {
-                    assertion.push(new SDK.Domain.AssertionMethod([isAssertion], [verificationMethod]))
+                    assertion.push(new SDK.Domain.DIDDocument.AssertionMethod([isAssertion], [verificationMethod]))
                 }
                 const isAuthentication = didDocument.authentication?.find((method: string) => method === verificationMethod.id)
                 if (isAuthentication) {
-                    authenticate.push(new SDK.Domain.Authentication([isAuthentication], [verificationMethod]));
+                    authenticate.push(new SDK.Domain.DIDDocument.Authentication([isAuthentication], [verificationMethod]));
                 }
             }
             coreProperties.push(...authenticate);

@@ -2,8 +2,8 @@
 
 import Head from "next/head";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
-import { useDatabase } from "@/hooks";
+import { useRouter } from "next/navigation";
+import { useDatabase } from "@trust0/identus-react/hooks";
 import { useApollo } from "@trust0/identus-react/hooks";
 import AgentRequire from "@/components/AgentRequire";
 

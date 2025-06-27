@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import encodeQR from 'qr';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { base64 } from 'multiformats/bases/base64'
 interface QRCodeDisplayProps {
     oob: string;

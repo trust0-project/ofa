@@ -2,10 +2,11 @@ import SDK from "@hyperledger/identus-sdk";
 import { useEffect, useState } from "react";
 import { useAgent, useIssuer, useMessages } from "@trust0/identus-react/hooks";
 
-import {  useDatabase, usePermissions } from "@/hooks";
+import {  useDatabase } from "@trust0/identus-react/hooks";
 import { MessageTitle } from "./MessageTitle";
 import { useMessageStatus } from "./utils";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
+import { usePermissions } from "@/hooks";
 
 export function CredentialRequest(props: { message: SDK.Domain.Message }) {
     const router = useRouter();
