@@ -40,9 +40,8 @@ function CredentialsPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const pathname = usePathname();
-    const [credentials, setCredentials] = useState<SDK.Domain.Credential[]>([]);
+    const { credentials } = useCredentials();
     const [message, setMessage] = useState<SDK.Domain.Message | undefined>();
-    const { fetchCredentials } = useCredentials();
     
     useEffect(() => {
         if (peerDID) {
@@ -60,10 +59,6 @@ function CredentialsPage() {
             }
         }
     }, [searchParams, peerDID, router, pathname]);
-
-    useEffect(() => {
-        fetchCredentials().then(setCredentials);
-    }, [fetchCredentials]);
 
     return (
         <div className="max-w-6xl mx-auto">

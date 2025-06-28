@@ -17,7 +17,7 @@
     "@meshsdk/react": "^1.9.0-beta.1",
     "@paulmillr/qr": "^0.3.0",
     "@stablelib/uuid": "^2.0.1",
-    "@trust0/identus-react": "^0.0.57",
+    "@trust0/identus-react": "^0.0.62",
     "@trust0/identus-store": "^1.0.7",
     "@trust0/ridb": "^1.5.28",
     "@trust0/ridb-core": "^1.7.23",
