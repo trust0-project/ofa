@@ -4,11 +4,16 @@ import { useMessages } from "@trust0/identus-react/hooks";
 import { withLayout } from "@/components/withLayout";
 import { getLayoutProps } from "@/components/withLayout";
 import { MessageSquare, Send, ArrowDownCircle, Trash2, ChevronRight, Clock } from "lucide-react";
+import { useEffect } from "react";
 
 export const getServerSideProps = getLayoutProps;
 function MessagesPage() {
     
-    const { messages, deleteMessage } = useMessages();
+    const { messages, deleteMessage, getMessages} = useMessages();
+
+    useEffect(() => {
+        getMessages();
+    }, [getMessages]);
 
     const handleDeleteMessage = async (message: SDK.Domain.Message) => {
         await deleteMessage(message);
