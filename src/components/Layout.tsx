@@ -15,7 +15,7 @@ import { PeerDIDCopy } from './PeerDIDCopy';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useAgent, useDatabase, useMessages } from '@trust0/identus-react/hooks';
 import { useRouter as useCustomRouter } from '@/hooks';
-import { getLayoutProps, PageProps } from './withLayout';
+import { PageProps } from './withLayout';
 import SDK from '@hyperledger/identus-sdk';
 
 interface LayoutProps extends PageProps {
@@ -52,12 +52,14 @@ export default function Layout({
     pageHeader = true,
     isMediatorManaged,
     serverMediatorDID,
+    serverResolverUrl
 }: LayoutProps) {
     const {
         getMediator,
         getSeed,
         getWallet,
         setMediator,
+        setResolverUrl,
         state: dbState,
         error: dbError,
     } = useDatabase();
@@ -86,6 +88,12 @@ export default function Layout({
     useEffect(() => {
         setIsSidebarOpen(false);
     }, [currentRoute]);
+
+    useEffect(() => {
+        if (serverResolverUrl && dbState === "loaded") {
+            setResolverUrl(serverResolverUrl);
+        }
+    }, [dbState, serverResolverUrl, setResolverUrl])
 
     const currentMediator = useCallback(async () => {
         if (serverMediatorDID) {

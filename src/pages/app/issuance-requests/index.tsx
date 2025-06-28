@@ -1,7 +1,7 @@
 
 import Link from "next/link";
-import { useDatabase, usePeerDID, usePrismDID } from "@trust0/identus-react/hooks";
-import { useEffect, useState } from "react";
+import { useDatabase, useMessages, usePeerDID, usePrismDID } from "@trust0/identus-react/hooks";
+import { useCallback, useEffect, useState } from "react";
 import SDK from '@hyperledger/identus-sdk';
 import { v4 as uuidv4 } from 'uuid';
 import { base64ToBytes } from "did-jwt";
@@ -14,7 +14,6 @@ type IssuanceRequest = {
     issuingDID: string;
     credentialFormat: string;
     automaticIssuance: boolean;
-    status: string;
     claims: Array<{
         name: string;
         value: string;
@@ -24,7 +23,7 @@ type IssuanceRequest = {
 };
 
 function IssuanceRequestsPage() {
-    const {  error: dbError, getIssuanceFlows, state: dbState } = useDatabase();
+    const { error: dbError, getIssuanceFlows, state: dbState } = useDatabase();
     const { agent } = useAgent();
     const { peerDID } = usePeerDID();
     const [issuanceRequests, setIssuanceRequests] = useState<IssuanceRequest[]>([]);
@@ -34,6 +33,23 @@ function IssuanceRequestsPage() {
     const [showPopup, setShowPopup] = useState(false);
     const [oob, setOob] = useState<string | null>(null);
     const [selectedRequest, setSelectedRequest] = useState<IssuanceRequest | null>(null);
+    const {messages} = useMessages();
+const getIssuanceRequestStatus = useCallback((request: IssuanceRequest) => {
+ 
+    const relatedMessages = messages
+        .filter(({message}) => message.thid === request.id);
+
+    if (relatedMessages.find(({message}) => message.piuri === SDK.ProtocolType.DidcommIssueCredential)) {
+        return 'issued'
+    }
+
+    if (relatedMessages.find(({message}) => message.piuri === SDK.ProtocolType.DidcommRequestCredential)) {
+        return 'issuance-pending'
+    }
+
+    debugger;
+    return 'pending' as const
+}, [messages]);
 
     useEffect(() => {
         if (dbState === 'loaded') {
@@ -82,18 +98,22 @@ function IssuanceRequestsPage() {
                                     input_descriptors: [],
                                     format: {
                                         jwt: {
-                                            alg: ["ES256K"],
+                                            alg: [
+                                                request.credentialFormat === SDK.Domain.CredentialType.JWT ? 
+                                                SDK.Domain.JWT_ALG.ES256K : 
+                                                SDK.Domain.JWT_ALG.EdDSA
+                                            ],
                                             proof_type: [],
                                         },
                                     },
                                 },
-                                format: "prism/jwt",
+                                format: request.credentialFormat,
                             },
                         },
                         "application/json",
                         request.id,
                         undefined,
-                        "prism/jwt"
+                        request.credentialFormat
                     )
                 ],
                 undefined,
@@ -200,13 +220,13 @@ function IssuanceRequestsPage() {
                                             {request.claims.length} claims
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${request.status === 'pending'
+                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getIssuanceRequestStatus(request) === 'pending'
                                                 ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-                                                : request.status === 'issued'
+                                                : getIssuanceRequestStatus(request) === 'issued'
                                                     ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
                                                     : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
                                                 }`}>
-                                                {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
+                                                {getIssuanceRequestStatus(request).charAt(0).toUpperCase() + getIssuanceRequestStatus(request).slice(1)}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
