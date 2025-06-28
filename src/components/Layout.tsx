@@ -17,6 +17,7 @@ import { useAgent, useDatabase, useMessages } from '@trust0/identus-react/hooks'
 import { useRouter as useCustomRouter } from '@/hooks';
 import { PageProps } from './withLayout';
 import SDK from '@hyperledger/identus-sdk';
+import { BLOCKFROST_KEY_NAME } from '@/config';
 
 interface LayoutProps extends PageProps {
     children: ReactNode;
@@ -52,7 +53,8 @@ export default function Layout({
     pageHeader = true,
     isMediatorManaged,
     serverMediatorDID,
-    serverResolverUrl
+    serverResolverUrl,
+    serverBlockfrostKey
 }: LayoutProps) {
     const {
         getMediator,
@@ -60,6 +62,7 @@ export default function Layout({
         getWallet,
         setMediator,
         setResolverUrl,
+        storeSettingsByKey,
         state: dbState,
         error: dbError,
     } = useDatabase();
@@ -90,18 +93,25 @@ export default function Layout({
     }, [currentRoute]);
 
     useEffect(() => {
-        if (serverResolverUrl && dbState === "loaded") {
-            setResolverUrl(serverResolverUrl);
+        if (dbState === "loaded") {
+            if (serverMediatorDID) {
+                setMediator(SDK.Domain.DID.fromString(serverMediatorDID));
+            }
+            if (serverResolverUrl) {
+                setResolverUrl(serverResolverUrl);
+            }
+            if (serverBlockfrostKey) {
+                storeSettingsByKey(BLOCKFROST_KEY_NAME, serverBlockfrostKey);
+            }
         }
-    }, [dbState, serverResolverUrl, setResolverUrl])
+    }, [dbState, serverResolverUrl, serverMediatorDID,setResolverUrl, setMediator, serverBlockfrostKey, storeSettingsByKey])
 
     const currentMediator = useCallback(async () => {
         if (serverMediatorDID) {
-            await setMediator(SDK.Domain.DID.fromString(serverMediatorDID));
             return serverMediatorDID;
         }
         return await getMediator();
-    }, [serverMediatorDID, getMediator, setMediator]);
+    }, [serverMediatorDID, getMediator]);
 
     useEffect(() => {
         async function load() {
