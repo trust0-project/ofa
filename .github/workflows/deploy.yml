@@ -42,6 +42,7 @@ jobs:
           BLOCKFROST_API_KEY: ${{ secrets.BLOCKFROST_API_KEY }}
           MEDIATOR_DID: ${{ secrets.MEDIATOR_DID }}
           PRISM_RESOLVER_URL: ${{ secrets.PRISM_RESOLVER_URL }}
+          GITHUB_PAGES: true
         run: yarn build
         
       - name: Setup Pages
