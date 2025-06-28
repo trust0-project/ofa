@@ -8,7 +8,7 @@ import { GroupedDIDs } from "@/utils/types";
 import withLayout from "@/components/withLayout";
 import { getLayoutProps } from "@/components/withLayout";
 
-export const getServerSideProps = getLayoutProps;
+export const getStaticProps = getLayoutProps;
 function DIDsPage() {
     const { db, getGroupedDIDs } = useDatabase();
     const router = useRouter();

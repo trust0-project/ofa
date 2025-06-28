@@ -7,13 +7,17 @@ import { useRouter } from "next/navigation";
 import AgentRequire from "@/components/AgentRequire";
 import { MEDIATOR_DID } from "@/config";
 import { useDatabase } from "@trust0/identus-react/hooks";
-import { getLayoutProps } from "@/components/withLayout";
+import { getLayoutProps, PageProps } from "@/components/withLayout";
 
-export const getServerSideProps = getLayoutProps;
-export default function Mediator() {
+export const getStaticProps = getLayoutProps;
+
+
+export default function Mediator({
+    serverMediatorDID
+}: PageProps) {
     const { storeSettingsByKey } = useDatabase();
     const router = useRouter();
-    const [mediatorDID, setMediatorDID] = useState<string | undefined>(process.env.NEXT_PUBLIC_MEDIATOR_DID);
+    const [mediatorDID, setMediatorDID] = useState<string | undefined>(serverMediatorDID ?? undefined);
 
     function onClick() {
         if (mediatorDID?.length) {

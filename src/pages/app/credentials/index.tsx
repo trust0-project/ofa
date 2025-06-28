@@ -13,7 +13,7 @@ import withLayout from "@/components/withLayout";
 import { OfferCredential } from "@/components/messages";
 import { getLayoutProps } from "@/components/withLayout";
 
-export const getServerSideProps = getLayoutProps;
+export const getStaticProps = getLayoutProps;
 
 function CredentialOffer({ message, onReject }: { message: SDK.Domain.Message, onReject: () => void }) {
     const { agent } = useAgent();

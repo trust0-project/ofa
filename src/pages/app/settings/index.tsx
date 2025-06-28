@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { GetServerSideProps } from "next";
+import { GetStaticProps } from "next";
 import { BLOCKFROST_KEY_NAME, PRISM_RESOLVER_URL_KEY, FEATURES, MEDIATOR_DID } from "@/config";
 import { useDatabase } from "@trust0/identus-react/hooks";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -286,7 +286,7 @@ function SettingsPage({
 
 
 
-export const getServerSideProps = getLayoutProps;
+export const getStaticProps = getLayoutProps;
 // Create a properly typed wrapped component
 const WrappedSettingsPage = withLayout(SettingsPage as any, {
     title: "Settings",

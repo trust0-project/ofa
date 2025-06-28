@@ -6,7 +6,7 @@ import { useMessages } from "@trust0/identus-react/hooks";
 import withLayout from "@/components/withLayout";
 import { getLayoutProps } from "@/components/withLayout";
 
-export const getServerSideProps = getLayoutProps;
+export const getStaticProps = getLayoutProps;
 function MessageDetails() {
     const { messages, readMessage } = useMessages();
     const params = useParams();

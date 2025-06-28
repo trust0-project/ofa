@@ -3,7 +3,7 @@ import { useConnections } from "@trust0/identus-react/hooks";
 import withLayout from "@/components/withLayout";
 import { getLayoutProps } from "@/components/withLayout";
 
-export const getServerSideProps = getLayoutProps;
+export const getStaticProps = getLayoutProps;
 function ConnectionsPage() {
     const { connections } = useConnections();
     return (
