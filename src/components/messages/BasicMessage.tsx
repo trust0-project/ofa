@@ -43,7 +43,6 @@ export function BasicMessage(props: { message: SDK.Domain.Message }) {
     const handleSend = async () => {
         setIsAnswering(true);
         const text = response;
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const from = message?.from as SDK.Domain.DID;
         const to = message?.to as SDK.Domain.DID;
         const thid = message?.thid || message?.id;

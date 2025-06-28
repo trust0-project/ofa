@@ -160,7 +160,6 @@ export default function Layout({
     ];
 
     const isNavGroup = (item: NavigationItem): item is NavGroup => 'children' in item;
-    // eslint-disable-next-line prefer-const
     if (!loaded) {
         return <Loading />
     }

@@ -7,6 +7,14 @@ import withLayout from "@/components/withLayout";
 import { getLayoutProps } from "@/components/withLayout";
 
 export const getStaticProps = getLayoutProps;
+
+export async function getStaticPaths() {
+    return {
+        paths: [],
+        fallback: 'blocking'
+    };
+}
+
 function MessageDetails() {
     const { messages, readMessage } = useMessages();
     const params = useParams();
