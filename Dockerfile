@@ -1,5 +1,5 @@
 # Stage 1: Dependencies
-FROM node:20 AS deps
+FROM node:22
 WORKDIR /app
 
 # Enable corepack and set up Yarn

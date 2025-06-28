@@ -478,21 +478,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/config-array@npm:^0.20.1":
-  version: 0.20.1
-  resolution: "@eslint/config-array@npm:0.20.1"
+"@eslint/config-array@npm:^0.21.0":
+  version: 0.21.0
+  resolution: "@eslint/config-array@npm:0.21.0"
   dependencies:
     "@eslint/object-schema": "npm:^2.1.6"
     debug: "npm:^4.3.1"
     minimatch: "npm:^3.1.2"
-  checksum: 10c0/709108c3925d83c2166024646829ab61ba5fa85c6568daefd32508899f46ed8dc36d7153042df6dcc7e58ad543bc93298b646575daecb5eb4e39a43d838dab42
+  checksum: 10c0/0ea801139166c4aa56465b309af512ef9b2d3c68f9198751bbc3e21894fe70f25fbf26e1b0e9fffff41857bc21bfddeee58649ae6d79aadcd747db0c5dca771f
   languageName: node
   linkType: hard
 
-"@eslint/config-helpers@npm:^0.2.1":
-  version: 0.2.3
-  resolution: "@eslint/config-helpers@npm:0.2.3"
-  checksum: 10c0/8fd36d7f33013628787947c81894807c7498b31eacf6648efa6d7c7a99aac6bf0d59a8a4d14f968ec2aeebefb76a1a7e4fd4cd556a296323d4711b3d7a7cda22
+"@eslint/config-helpers@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "@eslint/config-helpers@npm:0.3.0"
+  checksum: 10c0/013ae7b189eeae8b30cc2ee87bc5c9c091a9cd615579003290eb28bebad5d78806a478e74ba10b3fe08ed66975b52af7d2cd4b4b43990376412b14e5664878c8
   languageName: node
   linkType: hard
 
@@ -531,10 +531,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/js@npm:9.29.0":
-  version: 9.29.0
-  resolution: "@eslint/js@npm:9.29.0"
-  checksum: 10c0/d0ccf37063fa27a3fae9347cb044f84ca10b5a2fa19ffb2b3fedf3b96843ac1ff359ea9f0ab0e80f2f16fda4cb0dc61ea0fed0375090f050fe0a029e7d6de3a3
+"@eslint/js@npm:9.30.0":
+  version: 9.30.0
+  resolution: "@eslint/js@npm:9.30.0"
+  checksum: 10c0/aec2df7f4e4e884d693dc27dbf4713c1a48afa327bfadac25ebd0e61a2797ce906f2f2a9be0d7d922acb68ccd68cc88779737811f9769eb4933d1f5e574c469e
   languageName: node
   linkType: hard
 
@@ -589,41 +589,41 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@floating-ui/core@npm:^1.7.1":
-  version: 1.7.1
-  resolution: "@floating-ui/core@npm:1.7.1"
+"@floating-ui/core@npm:^1.7.2":
+  version: 1.7.2
+  resolution: "@floating-ui/core@npm:1.7.2"
   dependencies:
-    "@floating-ui/utils": "npm:^0.2.9"
-  checksum: 10c0/40df1e1dd8a2bad6f70c1ee163f0e151c456f52b9b98a38488d88720b2be72ccd631501a66f8369f96d2e8ad1c4250936b6fd4243e3a99833f2d008ee6afec18
+    "@floating-ui/utils": "npm:^0.2.10"
+  checksum: 10c0/ea5909ae1bfad6d8dd60ab893c7751fd974d96b25481d13805935a089b39881b4d69425a0a84cc74c82269d8b64ca0117c472fc83e425143bee1bb21b247de9c
   languageName: node
   linkType: hard
 
-"@floating-ui/dom@npm:^1.0.0":
-  version: 1.7.1
-  resolution: "@floating-ui/dom@npm:1.7.1"
+"@floating-ui/dom@npm:^1.7.2":
+  version: 1.7.2
+  resolution: "@floating-ui/dom@npm:1.7.2"
   dependencies:
-    "@floating-ui/core": "npm:^1.7.1"
-    "@floating-ui/utils": "npm:^0.2.9"
-  checksum: 10c0/33b0e892f4c50ce568169cd58793ff5e3bc1e72ee007237d73b9458d4475e1e5f5a4b3f9e6752422d5f5ac902bc0c135ca7dc0a23c6df187fd9d28dc34cdceed
+    "@floating-ui/core": "npm:^1.7.2"
+    "@floating-ui/utils": "npm:^0.2.10"
+  checksum: 10c0/1b2ad76dc7fe245a1bb406cd5b64a1316f2ec642aebaa4d1928b56ced6fe71046f089e3fef9340bab234645b6333546211e363a630a9e7cfca6bf5031c39e0cb
   languageName: node
   linkType: hard
 
 "@floating-ui/react-dom@npm:^2.0.0":
-  version: 2.1.3
-  resolution: "@floating-ui/react-dom@npm:2.1.3"
+  version: 2.1.4
+  resolution: "@floating-ui/react-dom@npm:2.1.4"
   dependencies:
-    "@floating-ui/dom": "npm:^1.0.0"
+    "@floating-ui/dom": "npm:^1.7.2"
   peerDependencies:
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
-  checksum: 10c0/e88750ea2fb352264d52d502d3979f94155ce2c8ab9a50862810d0cfc8c8e49cb6bbde466d668736cb38624d089360ef97451397b647408a0eb2c1870234c19a
+  checksum: 10c0/2dade6b8e18de09c90b876249756155ab31f49b5a81d246a3dc568d0355bc9e4bc26485dfd27b9e3bf86585700f4d241e8f53e8321249ec9b012a266a86b9366
   languageName: node
   linkType: hard
 
-"@floating-ui/utils@npm:^0.2.9":
-  version: 0.2.9
-  resolution: "@floating-ui/utils@npm:0.2.9"
-  checksum: 10c0/48bbed10f91cb7863a796cc0d0e917c78d11aeb89f98d03fc38d79e7eb792224a79f538ed8a2d5d5584511d4ca6354ef35f1712659fd569868e342df4398ad6f
+"@floating-ui/utils@npm:^0.2.10":
+  version: 0.2.10
+  resolution: "@floating-ui/utils@npm:0.2.10"
+  checksum: 10c0/e9bc2a1730ede1ee25843937e911ab6e846a733a4488623cd353f94721b05ec2c9ec6437613a2ac9379a94c2fd40c797a2ba6fa1df2716f5ce4aa6ddb1cf9ea4
   languageName: node
   linkType: hard
 
@@ -2299,9 +2299,9 @@ __metadata:
   linkType: hard
 
 "@rushstack/eslint-patch@npm:^1.10.3":
-  version: 1.11.0
-  resolution: "@rushstack/eslint-patch@npm:1.11.0"
-  checksum: 10c0/abea8d8cf2f4f50343f74abd6a8173c521ddd09b102021f5aa379ef373c40af5948b23db0e87eca1682e559e09d97d3f0c48ea71edad682c6bf72b840c8675b3
+  version: 1.12.0
+  resolution: "@rushstack/eslint-patch@npm:1.12.0"
+  checksum: 10c0/1e567656d92632c085a446f40767bc451caffe1131e8d6a7a3e8f3e3f4167f5f29744a84c709f2440f299442d4bc68ff773784462166800b8c09c0e08042415b
   languageName: node
   linkType: hard
 
@@ -2671,11 +2671,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@trust0/identus-react@npm:^0.0.50":
-  version: 0.0.50
-  resolution: "@trust0/identus-react@npm:0.0.50"
+"@trust0/identus-react@npm:^0.0.51":
+  version: 0.0.51
+  resolution: "@trust0/identus-react@npm:0.0.51"
   dependencies:
-    "@trust0/identus-store": "npm:^1.0.6"
+    "@trust0/identus-store": "npm:^1.0.7"
     "@trust0/ridb": "npm:^1.5.28"
     "@trust0/ridb-core": "npm:^1.7.23"
     "@trust0/ridb-react": "npm:^1.4.5"
@@ -2687,20 +2687,20 @@ __metadata:
     "@hyperledger/identus-sdk": ^7.0.0-rc.5
     react: ^18
     react-dom: ^18
-  checksum: 10c0/8c05081bbcc6a0fc294783588d0dca4f5643b2c0d3c37582fcc7a90c72c43c5f0075cf53cb2b34d660ac3f842101b0d696d08b2b50f732e6fdaeec2acd4ea04a
+  checksum: 10c0/94e9e0f55f70719fe791c397d226a90f9a70852bece2cfc586e843401e97c59608bb7d50dd34d5fd589e3dec66a56001f64919474ff701c2a428c3b71c952900
   languageName: node
   linkType: hard
 
-"@trust0/identus-store@npm:^1.0.6":
-  version: 1.0.6
-  resolution: "@trust0/identus-store@npm:1.0.6"
+"@trust0/identus-store@npm:^1.0.7":
+  version: 1.0.7
+  resolution: "@trust0/identus-store@npm:1.0.7"
   dependencies:
     uuid: "npm:^11.1.0"
   peerDependencies:
     "@hyperledger/identus-sdk": ^7.0.0-rc.2
     "@trust0/ridb": ^1.5.28
     "@trust0/ridb-core": ^1.7.23
-  checksum: 10c0/b50fcffd20e281b0d3a936729db71ae98758a8bd6aad6fc8194938bc0ca1149c04b00ca83397b48cecb86b54a49807db3241394400a6df4e7bd108b006efd4d4
+  checksum: 10c0/9ab3cdbf852b570f915cbae427e1368ddbb507091f0ed1ef4b59212635d7fcb6198a332a7e52206e752ede033cef1d068859fd03b520cae2844ab832f1b4351f
   languageName: node
   linkType: hard
 
@@ -2712,13 +2712,13 @@ __metadata:
   linkType: hard
 
 "@trust0/ridb-react@npm:^1.4.5, @trust0/ridb-react@npm:^1.4.6":
-  version: 1.4.6
-  resolution: "@trust0/ridb-react@npm:1.4.6"
+  version: 1.4.7
+  resolution: "@trust0/ridb-react@npm:1.4.7"
   peerDependencies:
     "@trust0/ridb": ^1
     react: ^18
     react-dom: ^18
-  checksum: 10c0/dead14a31f212b19d67627c5eb820c67f99e9ff18e1eaca2bf91df01f231dbeaf679dfe0420a611d0a6a1246fc6c1896b82a5bf51331e64b80989a9eeef4ea87
+  checksum: 10c0/189a18759c39e65ed518e04a04b804a1600fe652e4cc443d26fbd05702df2f15f99c49e79c80bdf7ef6cb096e72074168110e57547b30ad21392cad555f7a504
   languageName: node
   linkType: hard
 
@@ -2832,11 +2832,11 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*":
-  version: 24.0.4
-  resolution: "@types/node@npm:24.0.4"
+  version: 24.0.7
+  resolution: "@types/node@npm:24.0.7"
   dependencies:
     undici-types: "npm:~7.8.0"
-  checksum: 10c0/590e8cb0ec59fb9cd566402120e690d87ecbdf57f1ee2b8493266121ed33aa4b25949a0c6156b84a6ffb9250baaf1f80e9af142da542ed603e6ee73fc4d1115f
+  checksum: 10c0/be3849816dafc54ec79e6be6dafcf60bdb6466beaf0081b941142d260e2b2864855210dfe5b4395c59b276468528695aefcf4f060ac95cc433b2968e80a311f9
   languageName: node
   linkType: hard
 
@@ -2850,11 +2850,11 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:^20":
-  version: 20.19.1
-  resolution: "@types/node@npm:20.19.1"
+  version: 20.19.2
+  resolution: "@types/node@npm:20.19.2"
   dependencies:
     undici-types: "npm:~6.21.0"
-  checksum: 10c0/4f1c3c8ec24c79af6802b376fa307904abf19accb9ac291de0bfc02220494c8b027d3ef733dbf64cc09b37594f22f679a15eabb30f3785bcfcc13bd9bbd8c0e2
+  checksum: 10c0/85195d2435a215c886b3dabb2a93c557397e2b933a18803c6dd4fb3f87c3de9c8290fe78f08b52ebeb3b14063a00b217f66b4f9c0192581dc7a677c4f8663a9c
   languageName: node
   linkType: hard
 
@@ -4975,9 +4975,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.5.173":
-  version: 1.5.174
-  resolution: "electron-to-chromium@npm:1.5.174"
-  checksum: 10c0/eb08cfc6df2d752c39177b01288fc55ddd08b05c26283d46dddafe5ba2e5bb8f8191f6012684a827aa19b325aaa28902b47d354478d22ff526ba85a66be8af79
+  version: 1.5.177
+  resolution: "electron-to-chromium@npm:1.5.177"
+  checksum: 10c0/cf833a5ef576690e2c04a79dfbd9d73d85ae7215b6d3bd66d858e47940ddda567091688ddee0683454c89733c9acc7a4fb4dcbb2caa8c317639d9eb35074ab06
   languageName: node
   linkType: hard
 
@@ -5398,16 +5398,16 @@ __metadata:
   linkType: hard
 
 "eslint@npm:^9":
-  version: 9.29.0
-  resolution: "eslint@npm:9.29.0"
+  version: 9.30.0
+  resolution: "eslint@npm:9.30.0"
   dependencies:
     "@eslint-community/eslint-utils": "npm:^4.2.0"
     "@eslint-community/regexpp": "npm:^4.12.1"
-    "@eslint/config-array": "npm:^0.20.1"
-    "@eslint/config-helpers": "npm:^0.2.1"
+    "@eslint/config-array": "npm:^0.21.0"
+    "@eslint/config-helpers": "npm:^0.3.0"
     "@eslint/core": "npm:^0.14.0"
     "@eslint/eslintrc": "npm:^3.3.1"
-    "@eslint/js": "npm:9.29.0"
+    "@eslint/js": "npm:9.30.0"
     "@eslint/plugin-kit": "npm:^0.3.1"
     "@humanfs/node": "npm:^0.16.6"
     "@humanwhocodes/module-importer": "npm:^1.0.1"
@@ -5443,7 +5443,7 @@ __metadata:
       optional: true
   bin:
     eslint: bin/eslint.js
-  checksum: 10c0/75e3f841e0f8b0fa93dbb2ba6ae538bd8b611c3654117bc3dadf90bb009923dfd2c15ec2948dc6e6b8b571317cc125c5cceb9255da8cd644ee740020df645dd8
+  checksum: 10c0/ebc4b17cfd96f308ebaeb12dfab133a551eb03200c80109ecf663fbeb9af83c4eb3c143407c1b04522d23b5f5844fe9a629b00d409adfc460c1aadf5108da86a
   languageName: node
   linkType: hard
 
@@ -5775,8 +5775,8 @@ __metadata:
   linkType: hard
 
 "framer-motion@npm:^12.10.1":
-  version: 12.19.1
-  resolution: "framer-motion@npm:12.19.1"
+  version: 12.19.2
+  resolution: "framer-motion@npm:12.19.2"
   dependencies:
     motion-dom: "npm:^12.19.0"
     motion-utils: "npm:^12.19.0"
@@ -5792,7 +5792,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 10c0/e3abc8c04c4d69452b4dadf9eeffdc4a252330730c5ff530616d265925b9a34d636992b1ec26191d60ab76a704d437de4c73dcec217f1ae0326adc005edc659f
+  checksum: 10c0/bc641a136e58d9c15826249bc6984b060fedbf3f3b14a5eb33fb8eec67cd274d1ea05aa3da9ad51972c5cad50c6b06c82160b02104bf3aeb33eddfc5b96c74fe
   languageName: node
   linkType: hard
 
@@ -8588,8 +8588,8 @@ __metadata:
     "@meshsdk/react": "npm:^1.9.0-beta.1"
     "@paulmillr/qr": "npm:^0.3.0"
     "@stablelib/uuid": "npm:^2.0.1"
-    "@trust0/identus-react": "npm:^0.0.50"
-    "@trust0/identus-store": "npm:^1.0.6"
+    "@trust0/identus-react": "npm:^0.0.51"
+    "@trust0/identus-store": "npm:^1.0.7"
     "@trust0/ridb": "npm:^1.5.28"
     "@trust0/ridb-core": "npm:^1.7.23"
     "@trust0/ridb-react": "npm:^1.4.6"
