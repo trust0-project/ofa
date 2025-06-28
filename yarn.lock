@@ -2671,11 +2671,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@trust0/identus-react@npm:^0.0.48":
-  version: 0.0.48
-  resolution: "@trust0/identus-react@npm:0.0.48"
+"@trust0/identus-react@npm:^0.0.50":
+  version: 0.0.50
+  resolution: "@trust0/identus-react@npm:0.0.50"
   dependencies:
-    "@trust0/identus-store": "npm:^1.0.5"
+    "@trust0/identus-store": "npm:^1.0.6"
     "@trust0/ridb": "npm:^1.5.28"
     "@trust0/ridb-core": "npm:^1.7.23"
     "@trust0/ridb-react": "npm:^1.4.5"
@@ -2687,20 +2687,20 @@ __metadata:
     "@hyperledger/identus-sdk": ^7.0.0-rc.5
     react: ^18
     react-dom: ^18
-  checksum: 10c0/47e188bc267c3e491342f7e656d8acf1b2a0da81cfe004083a8e810c3c6c1c08b37816f9b5ce805cef7ed7f5df26bc58eae2e24b64b2579c73d77df094cf835c
+  checksum: 10c0/8c05081bbcc6a0fc294783588d0dca4f5643b2c0d3c37582fcc7a90c72c43c5f0075cf53cb2b34d660ac3f842101b0d696d08b2b50f732e6fdaeec2acd4ea04a
   languageName: node
   linkType: hard
 
-"@trust0/identus-store@npm:^1.0.5":
-  version: 1.0.5
-  resolution: "@trust0/identus-store@npm:1.0.5"
+"@trust0/identus-store@npm:^1.0.6":
+  version: 1.0.6
+  resolution: "@trust0/identus-store@npm:1.0.6"
   dependencies:
     uuid: "npm:^11.1.0"
   peerDependencies:
     "@hyperledger/identus-sdk": ^7.0.0-rc.2
     "@trust0/ridb": ^1.5.28
     "@trust0/ridb-core": ^1.7.23
-  checksum: 10c0/bbe01685af4e42f59c30886efb1c94e52dfd065c125cad038c8e835afc95d782c633b90e537e51513704f8552419f4ec96b22b8ce47606ff6ea535b1bb700249
+  checksum: 10c0/b50fcffd20e281b0d3a936729db71ae98758a8bd6aad6fc8194938bc0ca1149c04b00ca83397b48cecb86b54a49807db3241394400a6df4e7bd108b006efd4d4
   languageName: node
   linkType: hard
 
@@ -8588,8 +8588,8 @@ __metadata:
     "@meshsdk/react": "npm:^1.9.0-beta.1"
     "@paulmillr/qr": "npm:^0.3.0"
     "@stablelib/uuid": "npm:^2.0.1"
-    "@trust0/identus-react": "npm:^0.0.48"
-    "@trust0/identus-store": "npm:^1.0.5"
+    "@trust0/identus-react": "npm:^0.0.50"
+    "@trust0/identus-store": "npm:^1.0.6"
     "@trust0/ridb": "npm:^1.5.28"
     "@trust0/ridb-core": "npm:^1.7.23"
     "@trust0/ridb-react": "npm:^1.4.6"
