@@ -1,7 +1,6 @@
 import SDK from "@hyperledger/identus-sdk";
 import React from "react";
 import { useAgent, useConnections } from "@trust0/identus-react/hooks";
-import { Popup } from "./Popup";
 
 interface ErrorState {
     oob?: string;
@@ -14,7 +13,6 @@ export const OOB: React.FC = () => {
     const { connections } = useConnections();
     const [oob, setOOB] = React.useState<string>("");
     const [alias, setAlias] = React.useState<string>("");
-    const [isPopupOpen, setIsPopupOpen] = React.useState(false);
     const [connectionStatus, setConnectionStatus] = React.useState<{ success: boolean; message: string } | null>(null);
     const [errors, setErrors] = React.useState<ErrorState>({});
     const [isSubmitting, setIsSubmitting] = React.useState(false);
@@ -73,7 +71,6 @@ export const OOB: React.FC = () => {
             const parsed = await agent.parseOOBInvitation(new URL(oob));
             await agent.acceptInvitation(parsed, alias);
             setConnectionStatus({ success: true, message: "Connection established successfully!" });
-            setIsPopupOpen(false);
         } catch (err) {
             if (!alias) {
                 setErrors({ alias: "Alias is required for this connection type" });
@@ -88,7 +85,6 @@ export const OOB: React.FC = () => {
                 await agent.sendMessage(message.makeMessage());
                 setConnectionStatus({ success: true, message: "Connection established successfully!" });
                 await agent.connections.add(new SDK.DIDCommConnection(from.toString(), to.toString(), alias));
-                setIsPopupOpen(false);
             } catch (error) {
                 setErrors({ general: "Failed to establish connection. Please try again." });
             }
@@ -100,90 +96,94 @@ export const OOB: React.FC = () => {
     }
 
     const connection = connections.at(0);
-    return <>
-        <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold text-text-primary-light dark:text-text-primary-dark">Out of Band Connections</h2>
-            <button
-                onClick={() => setIsPopupOpen(true)}
-                className="px-4 py-2 bg-button-primary-light dark:bg-button-primary-dark hover:bg-button-primary-dark dark:hover:bg-button-primary-light text-white rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-button-primary-light/50 dark:focus:ring-button-primary-dark/50">
-                Create DID
-            </button>
-        </div>
-        {!!connection && (
-            <>
-                <p className="text-text-primary-light dark:text-text-primary-dark">Stored Connection as <b>{connection.name}</b></p>
-            </>
-        )}
-        <Popup
-            isOpen={isPopupOpen}
-            onClose={() => {
-                setOOB("");
-                setAlias("");
-                setIsPopupOpen(false);
-                setErrors({});
-            }}
-            title={"New connection"}
-            footerButtons={[
-                <button
-                    key="create"
-                    className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-button-primary-light dark:bg-button-primary-dark text-base font-medium text-white hover:bg-button-primary-dark dark:hover:bg-button-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-button-primary-light/50 dark:focus:ring-button-primary-dark/50 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                    onClick={onConnectionHandleClick}
-                    disabled={isSubmitting}
-                >
-                    {isSubmitting ? "Creating..." : "Create"}
-                </button>
-            ]}
-        >
-            <h1 className="mb-4 text-lg font-extrabold tracking-tight leading-none text-text-primary-light dark:text-text-primary-dark">
-                Accept OOB (Connections / Presentations)
-            </h1>
-            <p className="mb-4 text-md text-text-primary-light dark:text-text-primary-dark">
-                This screen can help you establish a connection with another entity, wallet or agent. It also allows accepting an out of band verification request, when a verifier is asking you to prove something without a pre-existing connection, what we call "Connectionless presentation".
-            </p>
-
-            {errors.general && (
-                <div className="mb-4 p-3 bg-status-error-light/10 dark:bg-status-error-dark/10 border border-status-error-light/20 dark:border-status-error-dark/20 text-status-error-light dark:text-status-error-dark rounded">
-                    {errors.general}
+    
+    return (
+        <div className="w-full space-y-6">
+            {/* Connection Status */}
+            {connectionStatus && (
+                <div className={`p-3 rounded-lg border ${
+                    connectionStatus.success 
+                        ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-700 dark:text-green-400'
+                        : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-700 dark:text-red-400'
+                }`}>
+                    {connectionStatus.message}
+                </div>
+            )}
+            
+            {/* Existing Connection Info */}
+            {!!connection && (
+                <div className="bg-gray-50/50 dark:bg-gray-800/30 backdrop-blur-sm p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+                    <p className="text-gray-800 dark:text-white">
+                        Stored Connection: <span className="font-semibold">{connection.name}</span>
+                    </p>
                 </div>
             )}
 
-            <div className="mb-4">
-                <label htmlFor="alias" className="block text-sm font-medium text-text-primary-light dark:text-text-primary-dark mb-1">
-                    Connection Name (Optional)
-                </label>
-                <input
-                    id="alias"
-                    name="alias"
-                    className={`block p-2.5 w-full text-sm text-text-primary-light dark:text-text-primary-dark bg-input-background-light dark:bg-input-background-dark rounded-lg border ${errors.alias ? 'border-status-error-light dark:border-status-error-dark' : 'border-input-border-light dark:border-input-border-dark'
-                        } focus:ring-button-primary-light dark:focus:ring-button-primary-dark focus:border-button-primary-light dark:focus:border-button-primary-dark`}
-                    placeholder="Enter a name for this connection"
-                    type="text"
-                    value={alias}
-                    onChange={handleOnChange}
-                />
-                {errors.alias && (
-                    <p className="mt-1 text-sm text-status-error-light dark:text-status-error-dark">{errors.alias}</p>
-                )}
-            </div>
+            {/* Connection Form */}
+            <div className="space-y-6">
+                <div>
+                    <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
+                        Accept OOB (Connections / Presentations)
+                    </h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                        This form helps you establish a connection with another entity, wallet or agent. It also allows accepting an out of band verification request, when a verifier is asking you to prove something without a pre-existing connection.
+                    </p>
+                </div>
 
-            <div className="mb-4">
-                <label htmlFor="oob" className="block text-sm font-medium text-text-primary-light dark:text-text-primary-dark mb-1">
-                    OOB Invitation or DID
-                </label>
-                <input
-                    id="oob"
-                    name="oob"
-                    className={`block p-2.5 w-full text-sm text-text-primary-light dark:text-text-primary-dark bg-input-background-light dark:bg-input-background-dark rounded-lg border ${errors.oob ? 'border-status-error-light dark:border-status-error-dark' : 'border-input-border-light dark:border-input-border-dark'
-                        } focus:ring-button-primary-light dark:focus:ring-button-primary-dark focus:border-button-primary-light dark:focus:border-button-primary-dark`}
-                    placeholder="Paste out of band connection QRCode here or a DID"
-                    type="text"
-                    value={oob}
-                    onChange={handleOnChange}
-                />
-                {errors.oob && (
-                    <p className="mt-1 text-sm text-status-error-light dark:text-status-error-dark">{errors.oob}</p>
+                {errors.general && (
+                    <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 rounded-lg">
+                        {errors.general}
+                    </div>
                 )}
+
+                <div className="space-y-4">
+                    <div>
+                        <label htmlFor="alias" className="block text-sm font-medium text-gray-800 dark:text-white mb-2">
+                            Connection Name (Optional)
+                        </label>
+                        <input
+                            id="alias"
+                            name="alias"
+                            className={`block p-3 w-full text-sm text-gray-800 dark:text-white bg-white dark:bg-gray-800 rounded-lg border ${errors.alias ? 'border-red-500 dark:border-red-400' : 'border-gray-300 dark:border-gray-600'
+                                } focus:ring-teal-500 dark:focus:ring-teal-400 focus:border-teal-500 dark:focus:border-teal-400 transition-all duration-300`}
+                            placeholder="Enter a name for this connection"
+                            type="text"
+                            value={alias}
+                            onChange={handleOnChange}
+                        />
+                        {errors.alias && (
+                            <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.alias}</p>
+                        )}
+                    </div>
+
+                    <div>
+                        <label htmlFor="oob" className="block text-sm font-medium text-gray-800 dark:text-white mb-2">
+                            OOB Invitation or DID
+                        </label>
+                        <input
+                            id="oob"
+                            name="oob"
+                            className={`block p-3 w-full text-sm text-gray-800 dark:text-white bg-white dark:bg-gray-800 rounded-lg border ${errors.oob ? 'border-red-500 dark:border-red-400' : 'border-gray-300 dark:border-gray-600'
+                                } focus:ring-teal-500 dark:focus:ring-teal-400 focus:border-teal-500 dark:focus:border-teal-400 transition-all duration-300`}
+                            placeholder="Paste out of band connection QRCode here or a DID"
+                            type="text"
+                            value={oob}
+                            onChange={handleOnChange}
+                        />
+                        {errors.oob && (
+                            <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.oob}</p>
+                        )}
+                    </div>
+
+                    <button
+                        className="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-3 bg-gradient-to-r from-teal-500 to-green-500 text-base font-medium text-white hover:from-teal-600 hover:to-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+                        onClick={onConnectionHandleClick}
+                        disabled={isSubmitting}
+                    >
+                        {isSubmitting ? "Creating Connection..." : "Create Connection"}
+                    </button>
+                </div>
             </div>
-        </Popup>
-    </>;
+        </div>
+    );
 };

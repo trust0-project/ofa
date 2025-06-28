@@ -21,23 +21,23 @@ export default function SelectWallet({ onSelected }: { onSelected: (wallet: Wall
         });
     }, []);
 
-    return <div className="fixed inset-0 z-[9999] bg-background-light dark:bg-background-dark overflow-y-auto bg-black-20 flex items-center justify-center p-4">
-        <div className="rounded-lg shadow-xl max-w-2xl w-full p-6">
-            <h1 className="text-2xl font-bold text-text-primary-light dark:text-text-primary-dark">Connect to a Cardano Wallet</h1>
-            <p className="text-text-secondary-light dark:text-text-secondary-dark my-5">
+    return <div className="fixed inset-0 z-[9999] bg-white/95 dark:bg-[#0A0A0A]/95 backdrop-blur-lg overflow-y-auto flex items-center justify-center p-4" style={{ zIndex: 9999 }}>
+        <div className="bg-white/95 dark:bg-[#0A0A0A]/95 backdrop-blur-lg rounded-2xl shadow-2xl max-w-2xl w-full p-6 border border-gray-200 dark:border-gray-800">
+            <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Connect to a Cardano Wallet</h1>
+            <p className="text-gray-600 dark:text-gray-400 my-5">
                 Please select a wallet to continue
             </p>
             {error && (
-                <div className="mb-4 p-3 bg-status-error-light/10 dark:bg-status-error-dark/10 border border-status-error-light/20 dark:border-status-error-dark/20 text-status-error-light dark:text-status-error-dark rounded">
+                <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 rounded-lg">
                     <p>Error loading wallets: {error}</p>
                 </div>
             )}
 
             {availableWallets.length === 0 ? (
                 <div className="py-6 text-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-button-primary-light dark:border-button-primary-dark mx-auto mb-4"></div>
-                    <p className="text-text-primary-light dark:text-text-primary-dark">Loading wallets...</p>
-                    <p className="mt-2 text-text-secondary-light dark:text-text-secondary-dark text-sm">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-500 dark:border-teal-400 mx-auto mb-4"></div>
+                    <p className="text-gray-800 dark:text-white">Loading wallets...</p>
+                    <p className="mt-2 text-gray-600 dark:text-gray-400 text-sm">
                         Make sure you have a compatible Cardano wallet extension installed
                     </p>
                 </div>
@@ -46,7 +46,7 @@ export default function SelectWallet({ onSelected }: { onSelected: (wallet: Wall
                     {availableWallets.map((foundWallet: Wallet) => (
                         <button
                             key={foundWallet.name}
-                            className={`w-full flex items-center px-3 py-2 text-sm hover:bg-background-light/50 dark:hover:bg-background-dark/50 ${selectedWallet === foundWallet.name ? 'bg-background-light/50 dark:bg-background-dark/50' : ''
+                            className={`w-full flex items-center px-4 py-3 text-sm rounded-xl transition-all duration-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:shadow-lg ${selectedWallet === foundWallet.name ? 'bg-gradient-to-r from-teal-50 to-green-50 dark:from-teal-900/30 dark:to-green-900/30 border-teal-200 dark:border-teal-800' : ''
                                 }`}
                             onClick={async () => {
                                 try {
@@ -66,7 +66,7 @@ export default function SelectWallet({ onSelected }: { onSelected: (wallet: Wall
                                 width={24}
                                 height={24}
                             />
-                            <span className="text-lg font-medium text-text-primary-light dark:text-text-primary-dark">
+                            <span className="text-lg font-medium text-gray-800 dark:text-white">
                                 {foundWallet.name}
                             </span>
                         </button>

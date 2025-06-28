@@ -6,6 +6,7 @@ interface LayoutOptions {
     title?: string;
     description?: string;
     pageHeader?: boolean;
+    icon?: React.ReactNode;
 }
 export interface PageProps {
     serverBlockfrostKey: string | null;
@@ -31,9 +32,6 @@ export const getLayoutProps: GetServerSideProps<PageProps> = async () => {
         },
     };
 };
-
-
-
 
 export const getServerSideProps = getLayoutProps;
 

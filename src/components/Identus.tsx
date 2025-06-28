@@ -27,7 +27,7 @@ export default function AtalaGraphic() {
     }, [])
 
     return (
-        <div className="fixed  h-[700px] pointer-events-none">
+        <div className="fixed  h-[700px] pointer-events-none z-0">
             <div
                 className="whitespace-pre font-mono text-[12px] leading-[14px] absolute h-full"
                 style={{

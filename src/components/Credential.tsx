@@ -47,9 +47,9 @@ export function Credential(props: { credential: SDK.Domain.Credential }) {
 
     return (
         <div className="w-full mt-3">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+            <div className="bg-white/95 dark:bg-[#0A0A0A]/95 backdrop-blur-lg rounded-lg shadow-lg overflow-hidden border border-gray-200 dark:border-gray-800">
                 {/* Header */}
-                <div className="bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 p-4">
+                <div className="bg-gradient-to-r from-teal-500 to-green-500 dark:from-teal-600 dark:to-green-600 p-4">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
                             <div className="bg-white/20 backdrop-blur-sm rounded p-2">
@@ -59,7 +59,7 @@ export function Credential(props: { credential: SDK.Domain.Credential }) {
                             </div>
                             <div>
                                 <h2 className="text-base font-semibold text-white">{credentialType}</h2>
-                                <p className="text-xs text-blue-100">Verified Credential</p>
+                                <p className="text-xs text-teal-100">Verified Credential</p>
                             </div>
                         </div>
                         <div className="flex items-center space-x-1">
@@ -74,7 +74,7 @@ export function Credential(props: { credential: SDK.Domain.Credential }) {
                     {/* Issuer Section */}
                     <div className="mb-4 pb-4 border-b border-gray-200 dark:border-gray-700">
                         <label className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Issued By</label>
-                        <p className="mt-0.5 text-sm font-medium text-gray-900 dark:text-white">{credential.issuer}</p>
+                        <p className="mt-0.5 text-sm font-medium text-gray-800 dark:text-white">{credential.issuer}</p>
                     </div>
 
                     {/* Credentials Fields */}
@@ -98,7 +98,7 @@ export function Credential(props: { credential: SDK.Domain.Credential }) {
                                                                 </p>
                                                                 <button
                                                                     onClick={() => revealAttributes(credential, claimIndex, field)}
-                                                                    className="flex items-center space-x-1 px-2 py-0.5 text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+                                                                    className="ml-1 px-2 py-0.5 text-xs font-medium text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/20 rounded hover:bg-teal-100 dark:hover:bg-teal-900/30 transition-all duration-300"
                                                                 >
                                                                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -108,7 +108,7 @@ export function Credential(props: { credential: SDK.Domain.Credential }) {
                                                                 </button>
                                                             </>
                                                         ) : (
-                                                            <p className="text-sm font-medium text-gray-900 dark:text-white break-all">
+                                                            <p className="text-sm font-medium text-gray-800 dark:text-white break-all">
                                                                 {claim[field]}
                                                             </p>
                                                         )}

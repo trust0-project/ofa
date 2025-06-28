@@ -24,17 +24,17 @@ export default function QRCodeDisplay({ oob }: QRCodeDisplayProps) {
 
     return (
         <div className="space-y-4">
-            <div className="w-full bg-white p-4 rounded-lg flex items-center justify-center shadow border border-gray-200">
+            <div className="w-full bg-white/95  p-4 rounded-lg flex items-center justify-center shadow-lg border border-gray-200 dark:border-gray-800">
                 <div dangerouslySetInnerHTML={{ __html: qrSvg }} className="w-full h-full" />
             </div>
 
             <div className="flex items-center space-x-2">
-                <code className="flex-1 p-2 bg-gray-100 dark:bg-gray-800 rounded text-sm overflow-x-auto">
+                <code className="flex-1 p-2 bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-sm rounded text-sm overflow-x-auto text-gray-800 dark:text-gray-200">
                     {encoded}
                 </code>
                 <button
                     onClick={handleCopy}
-                    className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                    className="px-3 py-2 bg-gradient-to-r from-teal-500 to-green-500 hover:from-teal-600 hover:to-green-600 text-white rounded-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 shadow-lg hover:shadow-xl"
                 >
                     {copied ? 'Copied!' : 'Copy'}
                 </button>

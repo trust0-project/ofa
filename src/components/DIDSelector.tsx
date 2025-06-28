@@ -81,10 +81,9 @@ export function DIDSelector({
             {error ? (
                 <div className="text-sm text-red-500">{error}</div>
             ) : !hasAnyDIDs ? (
-                <div className="text-sm text-gray-500 dark:text-gray-400">
+                <div className="text-sm text-gray-500 dark:text-gray-400 mx-auto">
                     No DIDs available
-                    <button 
-                                                            className="px-3 py-1.5 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 flex items-center"
+                    <button className="ml-2 px-3 py-1.5 text-sm bg-gradient-to-r from-teal-500 to-green-500 hover:from-teal-600 hover:to-green-600 text-white rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50  "
 
                     onClick={async () => {
                         try {
@@ -106,7 +105,7 @@ export function DIDSelector({
                     </div>
             ) : (
                 <select
-                    className="block w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-teal-500 focus:border-teal-500"
                     onChange={handleDIDChange}
                     value={selectedDID || ""}
                 >

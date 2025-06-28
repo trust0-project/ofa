@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Plus, Fingerprint, Loader } from "lucide-react";
 
 import { DIDItem } from "@/components/DIDItem";
 import { ErrorAlert } from "@/components/ErrorAlert";
@@ -43,55 +44,82 @@ function DIDsPage() {
     const hasAnyDIDs = Object.values(groupedDIDs).some(dids => dids.length > 0);
 
     return (
-            <div className="bg-background-light dark:bg-background-dark hadow-sm">
-                {error && (
+        <div className="max-w-6xl mx-auto">
+            {error && (
+                <div className="mb-6">
                     <ErrorAlert
                         message={error}
                         onDismiss={() => setError(null)}
                     />
-                )}
+                </div>
+            )}
 
-                <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Your DIDs</h2>
+            {/* Create DID Button */}
+            <div className="flex justify-end mb-8">
+                {hasAnyDIDs && (
                     <button
                         onClick={createDIDClick}
-                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                        className="group inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-teal-500 to-green-500 text-white rounded-full font-medium hover:from-teal-600 hover:to-green-600 transition-all duration-300 shadow-lg hover:shadow-xl"
+                    >
+                        <Plus className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
                         Create DID
                     </button>
-                </div>
-
-                {loading ? (
-                    <div className="p-8 text-center border border-border-light dark:border-border-dark rounded-md bg-gray-50 dark:bg-gray-900">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                        <p className="text-gray-500 dark:text-gray-400">Loading DIDs...</p>
-                    </div>
-                ) : hasAnyDIDs ? (
-                    <div>
-                        {Object.entries(groupedDIDs).map(([method, dids]) => (
-                            <div key={`${method}-dids`} className="mb-6">
-                                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3 capitalize">
-                                    {method} DIDs
-                                </h3>
-                                <div className="border border-border-light dark:border-border-dark rounded-md bg-gray-50 dark:bg-gray-900">
-                                    {dids.map((didItem, index) => (
-                                        <DIDItem key={`${method}-${index}`} didItem={didItem} onUpdate={() => {
-                                            loadData();
-                                        }} />
-                                    ))}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    <div className="p-8 text-center text-gray-500 dark:text-gray-400 border border-border-light dark:border-border-dark rounded-md bg-gray-50 dark:bg-gray-900">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto mb-4 text-gray-400 dark:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
-                        </svg>
-                        <p className="text-lg mb-2">No DIDs created yet</p>
-                        <p>Create your first DID to get started with decentralized identity</p>
-                    </div>
                 )}
             </div>
+
+            {loading ? (
+                <div className="bg-white/95 dark:bg-[#0A0A0A]/95 backdrop-blur-lg p-12 rounded-2xl border border-gray-200 dark:border-gray-800 text-center shadow-lg">
+                    <div className="flex justify-center mb-4">
+                        <Loader className="w-8 h-8 text-teal-500 animate-spin" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Loading DIDs</h3>
+                    <p className="text-gray-600 dark:text-gray-400">Fetching your decentralized identifiers...</p>
+                </div>
+            ) : hasAnyDIDs ? (
+                <div className="space-y-8">
+                    {Object.entries(groupedDIDs).map(([method, dids]) => (
+                        <div key={`${method}-dids`}>
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-6 h-6 bg-gradient-to-br from-teal-100 to-green-100 dark:from-teal-900/50 dark:to-green-900/50 rounded-lg flex items-center justify-center">
+                                    <div className="w-2 h-2 bg-teal-500 rounded-full" />
+                                </div>
+                                <h3 className="text-xl font-semibold text-gray-800 dark:text-white capitalize">
+                                    {method} DIDs
+                                </h3>
+                            </div>
+                            <div className="bg-white/95 dark:bg-[#0A0A0A]/95 backdrop-blur-lg rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-lg">
+                                {dids.map((didItem, index) => (
+                                    <div key={`${method}-${index}`} className="border-b border-gray-200 dark:border-gray-800 last:border-b-0">
+                                        <DIDItem didItem={didItem} onUpdate={() => {
+                                            loadData();
+                                        }} />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <div className="bg-gradient-to-br from-teal-50 to-green-50 dark:from-teal-900/20 dark:to-green-900/20 p-12 rounded-2xl border border-teal-200 dark:border-teal-800 text-center">
+                    <div className="w-16 h-16 bg-gradient-to-br from-teal-100 to-green-100 dark:from-teal-900/50 dark:to-green-900/50 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <Fingerprint className="w-8 h-8 text-teal-600 dark:text-teal-400" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-3">
+                        No DIDs Created Yet
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
+                        Create your first decentralized identifier to start building your self-sovereign digital identity on the blockchain.
+                    </p>
+                    <button
+                        onClick={createDIDClick}
+                        className="group inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-teal-500 to-green-500 text-white rounded-full font-medium hover:from-teal-600 hover:to-green-600 transition-all duration-300 shadow-lg hover:shadow-xl"
+                    >
+                        <Plus className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
+                        Create Your First DID
+                    </button>
+                </div>
+            )}
+        </div>
     );
 } 
 
@@ -99,5 +127,6 @@ function DIDsPage() {
 export default withLayout(DIDsPage, {
     title: "DIDs",
     description: "Manage your decentralized identifiers",
-    pageHeader: true
+    pageHeader: true,
+    icon: <Fingerprint className="w-5 h-5" />
 }); 

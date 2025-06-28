@@ -1,11 +1,12 @@
 import Head from "next/head";
 import { useCallback, useState } from "react";
-import AtalaGraphic from "@/components/Identus";
 import Image from "next/image";
 import { StorageType } from "@trust0/ridb";
 import { useDatabase } from "@trust0/identus-react/hooks";
 import { useRouter as useCustomRouter } from "@/hooks";
 import { useRouter } from "next/navigation";
+import { LogIn, Shield, AlertCircle } from "lucide-react";
+import AtalaGraphic from "@/components/Identus";
 
 export default function Auth() {
     const { start } = useDatabase();
@@ -37,59 +38,95 @@ export default function Auth() {
         <>
             <Head>
                 <title>Authentication | Identus Agent</title>
-                <meta name="description" content="Manage your connections with other agents" />
+                <meta name="description" content="Secure authentication for your identity agent" />
             </Head>
-            <AtalaGraphic />
-            <div className="relative min-h-screen w-full overflow-hidden">
-                <div className="relative z-10 min-h-screen flex items-center justify-center ">
-                    <div className="max-w-md w-full space-y-8 p-8 bg-background-light dark:bg-background-dark rounded-lg shadow-md">
-                        <Image src="/identus-navbar-light.png" alt="Identus Logo" width={500} height={100} />
+            <div className="min-h-screen bg-white dark:bg-[#0A0A0A] text-gray-800 dark:text-gray-200 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+                
+                <div className="sm:mx-auto sm:w-full sm:max-w-md z-10">
+                    <div className="flex justify-center mb-8">
+                        <div className="bg-white/95 dark:bg-[#0A0A0A]/95 backdrop-blur-lg rounded-2xl p-4 shadow-xl border border-gray-200 dark:border-gray-800">
+                            <Image src="/identus-navbar-light.png" alt="Identus Logo" width={128} height={32} />
+                        </div>
+                    </div>
+                    
+                    <div className="text-center">
+                        <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">
+                            Welcome Back
+                        </h2>
+                        <p className="text-gray-600 dark:text-gray-400">
+                            Access your decentralized identity agent
+                        </p>
+                    </div>
+                </div>
+
+
+
+                <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative z-20">
+                    <div className="bg-white/95 dark:bg-[#0A0A0A]/95 backdrop-blur-lg py-8 px-6 shadow-xl rounded-2xl border border-gray-200 dark:border-gray-800">
                         {error && (
-                            <div className="bg-status-error-light/10 dark:bg-status-error-dark/20 p-4 rounded-md">
-                                <p className="text-sm text-status-error-light dark:text-status-error-dark">{error}</p>
+                            <div className="mb-6 bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 p-4 rounded-xl border border-red-200 dark:border-red-800">
+                                <div className="flex items-center gap-3">
+                                    <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
+                                    <p className="text-red-800 dark:text-red-400 font-medium">{error}</p>
+                                </div>
                             </div>
                         )}
-                        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-                            <div className="rounded-md shadow-sm -space-y-px">
-                                <div>
-                                    <label htmlFor="dbName" className="sr-only">Database Name</label>
-                                    <input
-                                        id="dbName"
-                                        name="dbName"
-                                        type="text"
-                                        required
-                                        className="appearance-none rounded-none relative block w-full px-3 py-2 border border-input-border-light dark:border-input-border-dark placeholder-text-secondary-light dark:placeholder-text-secondary-dark text-text-primary-light dark:text-text-primary-dark rounded-t-md focus:outline-none focus:ring-button-primary-light focus:border-button-primary-light focus:z-10 sm:text-sm bg-input-background-light dark:bg-input-background-dark"
-                                        placeholder="Database Name"
-                                        value={dbName}
-                                        onChange={(e) => setDbName(e.target.value)}
-                                    />
-                                </div>
-                                <div>
-                                    <label htmlFor="password" className="sr-only">Password</label>
-                                    <input
-                                        id="password"
-                                        name="password"
-                                        type="password"
-                                        autoComplete="current-password"
-                                        required
-                                        className="appearance-none rounded-none relative block w-full px-3 py-2 border border-input-border-light dark:border-input-border-dark placeholder-text-secondary-light dark:placeholder-text-secondary-dark text-text-primary-light dark:text-text-primary-dark rounded-b-md focus:outline-none focus:ring-button-primary-light focus:border-button-primary-light focus:z-10 sm:text-sm bg-input-background-light dark:bg-input-background-dark"
-                                        placeholder="Password"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                    />
-                                </div>
-                            </div>
+                        
+                        <form className="space-y-6" onSubmit={handleSubmit}>
                             <div>
+                                <label htmlFor="dbName" className="block text-sm font-medium text-gray-800 dark:text-white mb-2">
+                                    Database Name
+                                </label>
+                                <input
+                                    id="dbName"
+                                    name="dbName"
+                                    type="text"
+                                    required
+                                    className="w-full px-4 py-3 bg-white/95 dark:bg-[#0A0A0A]/95 backdrop-blur-lg border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-300 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                                    placeholder="Enter database name"
+                                    value={dbName}
+                                    onChange={(e) => setDbName(e.target.value)}
+                                />
+                            </div>
+                            
+                            <div>
+                                <label htmlFor="password" className="block text-sm font-medium text-gray-800 dark:text-white mb-2">
+                                    Password
+                                </label>
+                                <input
+                                    id="password"
+                                    name="password"
+                                    type="password"
+                                    autoComplete="current-password"
+                                    required
+                                    className="w-full px-4 py-3 bg-white/95 dark:bg-[#0A0A0A]/95 backdrop-blur-lg border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-300 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                                    placeholder="Enter password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
+                            </div>
+
+                            <div className="pt-4">
                                 <button
                                     type="submit"
-                                    className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-button-primary-light hover:bg-button-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-button-primary-light"
+                                    className="group w-full flex justify-center items-center gap-2 py-3 px-4 bg-gradient-to-r from-teal-500 to-green-500 text-white font-medium rounded-lg hover:from-teal-600 hover:to-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-all duration-300 shadow-lg hover:shadow-xl"
                                 >
-                                    Login
+                                    <LogIn className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                                    Access Agent
                                 </button>
                             </div>
                         </form>
+                        
+                        <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+                            <div className="flex items-center justify-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                                <Shield className="w-4 h-4" />
+                                <span>Your data is encrypted and stored locally</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
+                <AtalaGraphic />
+
             </div>
         </>
     );

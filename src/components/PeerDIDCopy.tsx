@@ -26,7 +26,7 @@ export function PeerDIDCopy({type}: {type: 'peerDID' | 'prismDID'}) {
                 setShowCopyFeedback(true);
                 setTimeout(() => setShowCopyFeedback(false), 2000);
             }}
-            className={`text-xs sm:text-sm text-blue-500 transition-transform duration-300 flex items-center gap-2 ${showCopyFeedback ? 'text-green-500' : ''}`}
+            className={`text-xs sm:text-sm text-teal-500 transition-transform duration-300 flex items-center gap-2 ${showCopyFeedback ? 'text-green-500' : ''}`}
         >
             {showCopyFeedback ? (
                 <>

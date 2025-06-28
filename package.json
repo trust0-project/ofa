@@ -24,6 +24,7 @@
     "@trust0/ridb-react": "^1.4.6",
     "bn.js": "^5.2.2",
     "framer-motion": "^12.10.1",
+    "lucide-react": "^0.525.0",
     "next": "15.3.2",
     "postcss": "^8.5.3",
     "qr": "^0.5.0",

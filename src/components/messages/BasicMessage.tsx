@@ -2,6 +2,7 @@ import SDK from "@hyperledger/identus-sdk";
 import { useEffect, useState } from "react";
 import { useAgent } from "@trust0/identus-react/hooks";
 import { useMessageStatus } from "./utils";
+import { MessageCircle, Send, ArrowRight, User, Clock, Paperclip } from "lucide-react";
 
 export function BasicMessage(props: { message: SDK.Domain.Message }) {
     const { message } = props;
@@ -67,56 +68,122 @@ export function BasicMessage(props: { message: SDK.Domain.Message }) {
 
     const isReceived = message.direction !== SDK.Domain.MessageDirection.SENT;
 
-    return <div
-        className="w-full mt-5 p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 "
-    >
-        <div>
-            <b>Basic Message: </b> {message.id} {message.direction === 1 ? 'received' : 'sent'}
-            <p>from {message.from?.toString()}</p>
-            <p>to {message.to?.toString()}</p>
-            <pre style={{
-                textAlign: "left",
-                wordWrap: "break-word",
-                wordBreak: "break-all",
-                whiteSpace: "pre-wrap",
-            }}
-            >
-                {JSON.stringify(parsed.body.content, null, 2)}
-            </pre>
+    return (
+        <div className="space-y-6">
+            {/* Message Header */}
+            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 p-6 rounded-xl border border-blue-200 dark:border-blue-800">
+                <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/50 dark:to-cyan-900/50 rounded-xl flex items-center justify-center">
+                        <MessageCircle className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <div className="flex-1">
+                        <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
+                            Basic Message
+                        </h2>
+                        <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+                            <div className="flex items-center gap-1">
+                                <Clock className="w-4 h-4" />
+                                {new Date(message.createdTime * 1000).toLocaleString()}
+                            </div>
+                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                                isReceived
+                                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+                                    : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
+                            }`}>
+                                {isReceived ? 'Received' : 'Sent'}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Message Details */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-gradient-to-br from-gray-50 to-slate-50 dark:from-gray-800/50 dark:to-slate-800/50 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
+                    <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                        <User className="w-4 h-4 text-green-500" />
+                        From
+                    </h3>
+                    <p className="text-sm font-mono break-all text-gray-800 dark:text-gray-200 bg-white/80 dark:bg-gray-900/50 p-3 rounded-lg border border-gray-200 dark:border-gray-600">
+                        {message.from?.toString()}
+                    </p>
+                </div>
+                
+                <div className="bg-gradient-to-br from-gray-50 to-slate-50 dark:from-gray-800/50 dark:to-slate-800/50 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
+                    <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                        <ArrowRight className="w-4 h-4 text-orange-500" />
+                        To
+                    </h3>
+                    <p className="text-sm font-mono break-all text-gray-800 dark:text-gray-200 bg-white/80 dark:bg-gray-900/50 p-3 rounded-lg border border-gray-200 dark:border-gray-600">
+                        {message.to?.toString()}
+                    </p>
+                </div>
+            </div>
+
+            {/* Message Content */}
+            <div className="bg-gradient-to-br from-slate-50 to-gray-50 dark:from-slate-800/50 dark:to-gray-800/50 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                    <div className="w-3 h-3 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full"></div>
+                    Message Content
+                </h3>
+                <div className="bg-white/90 dark:bg-gray-900/60 backdrop-blur-sm p-4 rounded-lg border border-gray-300 dark:border-gray-600 shadow-inner">
+                    <div className="text-gray-800 dark:text-gray-200 whitespace-pre-wrap break-words">
+                        {parsed.body.content}
+                    </div>
+                </div>
+            </div>
+
+            {/* Attachments */}
             {attachments.length > 0 && (
-                <pre style={{
-                    textAlign: "left",
-                    wordWrap: "break-word",
-                    wordBreak: "break-all",
-                    whiteSpace: "pre-wrap",
-                }}
-                >
-                    <b>Attachments:</b>
-                    {attachments.map(x => JSON.stringify(x, null, 2))}
-                </pre>
+                <div className="bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 p-6 rounded-xl border border-amber-200 dark:border-amber-800">
+                    <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                        <Paperclip className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                        Attachments ({attachments.length})
+                    </h3>
+                    <div className="bg-white/90 dark:bg-gray-900/60 backdrop-blur-sm p-4 rounded-lg border border-amber-300 dark:border-amber-700 shadow-inner">
+                        <pre className="text-sm font-mono whitespace-pre-wrap break-all text-gray-800 dark:text-gray-200 overflow-x-auto">
+                            {attachments.map(x => JSON.stringify(x, null, 2)).join('\n\n')}
+                        </pre>
+                    </div>
+                </div>
             )}
 
-        </div>
-        {
-            isAnswering && <>
-                <div role="status">
-                    <svg aria-hidden="true" className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
-                        <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill" />
-                    </svg>
-                    <span className="sr-only">Loading...</span>
+            {/* Response Section */}
+            {isReceived && !hasResponse && (
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 p-6 rounded-xl border border-green-200 dark:border-green-800">
+                    <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                        <Send className="w-5 h-5 text-green-600 dark:text-green-400" />
+                        Send Response
+                    </h3>
+                    
+                    {isAnswering ? (
+                        <div className="flex items-center justify-center p-8">
+                            <div className="flex items-center gap-3 text-green-600 dark:text-green-400">
+                                <div className="w-5 h-5 border-2 border-green-600 dark:border-green-400 border-t-transparent rounded-full animate-spin"></div>
+                                <span className="font-medium">Sending response...</span>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="space-y-4">
+                            <textarea
+                                className="w-full p-4 text-gray-800 dark:text-gray-200 bg-white/90 dark:bg-gray-900/60 backdrop-blur-sm border border-green-300 dark:border-green-700 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:focus:ring-green-400 dark:focus:border-green-400 transition-all duration-300 resize-none"
+                                rows={4}
+                                value={response}
+                                placeholder="Type your response here..."
+                                onChange={(e) => setResponse(e.target.value)}
+                            />
+                            <button
+                                onClick={handleSend}
+                                disabled={!response.trim()}
+                                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 disabled:from-gray-400 disabled:to-gray-500 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
+                            >
+                                <Send className="w-4 h-4" />
+                                Send Response
+                            </button>
+                        </div>
+                    )}
                 </div>
-            </>
-        }
-        {
-            !isAnswering && isReceived && !hasResponse && <>
-                <input
-                    className="block mt-5 p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" type="text" value={response} placeholder="Your response" onChange={(e) => setResponse(e.target.value)} />
-
-                <button className="mt-5 inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900" style={{ width: 120 }} onClick={() => {
-                    handleSend();
-                }}>Respond</button>
-            </>
-        }
-    </div>;
+            )}
+        </div>
+    );
 } 

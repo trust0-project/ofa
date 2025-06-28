@@ -4,6 +4,20 @@ import { useDatabase } from "@trust0/identus-react/hooks";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import withLayout from "@/components/withLayout";
 import { getLayoutProps } from "@/components/withLayout";
+import { 
+    Settings, 
+    Key, 
+    Globe, 
+    Shield, 
+    Save, 
+    CheckCircle, 
+    AlertCircle,
+    Server,
+    RefreshCw,
+    Eye,
+    EyeOff
+} from "lucide-react";
+
 interface PageProps {
     serverBlockfrostKey: string | null;
     serverMediatorDID: string | null;
@@ -33,6 +47,7 @@ function SettingsPage({
     const [features, setFeatures] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState<{ success: boolean, message: string } | null>(null);
+    const [showBlockfrostKey, setShowBlockfrostKey] = useState(false);
 
     useEffect(() => {
         async function load() {
@@ -83,6 +98,7 @@ function SettingsPage({
 
     const handleSaveAll = async () => {
         setLoading(true);
+        setResult(null);
         try {
             const promises = [];
             
@@ -125,79 +141,135 @@ function SettingsPage({
     const hasUserManageableSettings = !isBlockfrostManaged || !isMediatorManaged || !isResolverManaged;
 
     return (
-        <div className="space-y-6">
-            <div className="bg-background-light dark:bg-background-dark shadow-sm rounded-lg p-6">
-                <div className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Theme
-                        </label>
-                        <div className="flex items-center gap-4">
-                            <ThemeToggle />
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                                Toggle between light and dark mode
+        <div className="max-w-6xl mx-auto">
+            <div className="space-y-6">
+                {/* Theme Settings */}
+                <div className="bg-white/95 dark:bg-[#0A0A0A]/95 backdrop-blur-lg rounded-2xl border border-gray-200 dark:border-gray-800 p-6 shadow-lg">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="w-8 h-8 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/50 dark:to-pink-900/50 rounded-lg flex items-center justify-center">
+                            <Settings className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Theme Preferences</h3>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-4 bg-gray-50/50 dark:bg-gray-800/30 rounded-xl">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-800 dark:text-white mb-1">
+                                Appearance
+                            </label>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                                Choose between light and dark mode
+                            </p>
+                        </div>
+                        <ThemeToggle />
+                    </div>
+                </div>
+
+                {/* API Configuration */}
+                <div className="bg-white/95 dark:bg-[#0A0A0A]/95 backdrop-blur-lg rounded-2xl border border-gray-200 dark:border-gray-800 p-6 shadow-lg">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="w-8 h-8 bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/50 dark:to-cyan-900/50 rounded-lg flex items-center justify-center">
+                            <Key className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Blockchain Configuration</h3>
+                    </div>
+                    
+                    <div className="space-y-6">
+                        {/* Blockfrost API Key */}
+                        <div>
+                            <div className="flex items-center gap-2 mb-2">
+                                <label htmlFor="blockfrostKey" className="block text-sm font-medium text-gray-800 dark:text-white">
+                                    Blockfrost API Key
+                                </label>
+                                {isBlockfrostManaged && (
+                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">
+                                        <Server className="w-3 h-3" />
+                                        Server Managed
+                                    </span>
+                                )}
+                                {!isBlockfrostManaged && serverBlockfrostKey && (
+                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300">
+                                        <RefreshCw className="w-3 h-3" />
+                                        Auto-synced
+                                    </span>
+                                )}
+                            </div>
+                            
+                            {isBlockfrostManaged ? (
+                                <div className="flex items-center gap-3 px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+                                    <Shield className="w-4 h-4 text-gray-500" />
+                                    <span className="text-gray-600 dark:text-gray-400">
+                                        Managed value (configured via environment variable)
+                                    </span>
+                                </div>
+                            ) : (
+                                <div className="relative">
+                                    <input
+                                        type={showBlockfrostKey ? "text" : "password"}
+                                        id="blockfrostKey"
+                                        value={blockfrostKey}
+                                        onChange={(e) => setBlockfrostKey(e.target.value)}
+                                        placeholder="Enter your Blockfrost API key"
+                                        className="w-full px-4 py-3 pr-12 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowBlockfrostKey(!showBlockfrostKey)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                                    >
+                                        {showBlockfrostKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                    </button>
+                                </div>
+                            )}
+                            
+                            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                                Required for interacting with the Cardano blockchain through Blockfrost services.
+                                {!isBlockfrostManaged && serverBlockfrostKey && (
+                                    <span className="block mt-1 text-blue-600 dark:text-blue-400">
+                                        Environment variable detected and automatically synchronized.
+                                    </span>
+                                )}
                             </p>
                         </div>
                     </div>
-                    
-                    <div>
-                        <label htmlFor="blockfrostKey" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Blockfrost API Key
-                            {isBlockfrostManaged && (
-                                <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">
-                                    Server Managed
-                                </span>
-                            )}
-                            {!isBlockfrostManaged && serverBlockfrostKey && (
-                                <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400">
-                                    Auto-synced from Environment
-                                </span>
-                            )}
-                        </label>
-                        <div className="mt-1 flex gap-4">
-                            {isBlockfrostManaged ? (
-                                <div className="flex-1 px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md text-gray-500 dark:text-gray-400">
-                                    Managed value (configured via environment variable)
-                                </div>
-                            ) : (
-                                <input
-                                    type="password"
-                                    id="blockfrostKey"
-                                    value={blockfrostKey}
-                                    onChange={(e) => setBlockfrostKey(e.target.value)}
-                                    placeholder="Enter your Blockfrost API key"
-                                    className="flex-1 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                />
-                            )}
+                </div>
+
+                {/* DID Configuration */}
+                <div className="bg-white/95 dark:bg-[#0A0A0A]/95 backdrop-blur-lg rounded-2xl border border-gray-200 dark:border-gray-800 p-6 shadow-lg">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="w-8 h-8 bg-gradient-to-br from-teal-100 to-green-100 dark:from-teal-900/50 dark:to-green-900/50 rounded-lg flex items-center justify-center">
+                            <Shield className="w-4 h-4 text-teal-600 dark:text-teal-400" />
                         </div>
-                        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                            This API key is required for interacting with the Cardano blockchain.
-                            {!isBlockfrostManaged && serverBlockfrostKey && (
-                                <span className="block mt-1 text-blue-600 dark:text-blue-400 text-xs">
-                                    Environment variable detected and automatically synchronized to database.
-                                </span>
-                            )}
-                        </p>
+                        <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Identity Configuration</h3>
                     </div>
                     
-                    <div>
-                        <label htmlFor="mediatorDID" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Mediator DID
-                            {isMediatorManaged && (
-                                <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">
-                                    Server Managed
-                                </span>
-                            )}
-                            {!isMediatorManaged && serverMediatorDID && (
-                                <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400">
-                                    Auto-synced from Environment
-                                </span>
-                            )}
-                        </label>
-                        <div className="mt-1 flex gap-4">
+                    <div className="space-y-6">
+                        {/* Mediator DID */}
+                        <div>
+                            <div className="flex items-center gap-2 mb-2">
+                                <label htmlFor="mediatorDID" className="block text-sm font-medium text-gray-800 dark:text-white">
+                                    Mediator DID
+                                </label>
+                                {isMediatorManaged && (
+                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">
+                                        <Server className="w-3 h-3" />
+                                        Server Managed
+                                    </span>
+                                )}
+                                {!isMediatorManaged && serverMediatorDID && (
+                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300">
+                                        <RefreshCw className="w-3 h-3" />
+                                        Auto-synced
+                                    </span>
+                                )}
+                            </div>
+                            
                             {isMediatorManaged ? (
-                                <div className="flex-1 px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md text-gray-500 dark:text-gray-400">
-                                    Managed value (configured via environment variable)
+                                <div className="flex items-center gap-3 px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+                                    <Shield className="w-4 h-4 text-gray-500" />
+                                    <span className="text-gray-600 dark:text-gray-400">
+                                        Managed value (configured via environment variable)
+                                    </span>
                                 </div>
                             ) : (
                                 <input
@@ -206,38 +278,46 @@ function SettingsPage({
                                     value={mediatorDID}
                                     onChange={(e) => setMediatorDID(e.target.value)}
                                     placeholder="Enter the Mediator DID"
-                                    className="flex-1 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                    className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
                                 />
                             )}
+                            
+                            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                                Required for establishing mediator connections in DIDComm protocols.
+                                {!isMediatorManaged && serverMediatorDID && (
+                                    <span className="block mt-1 text-blue-600 dark:text-blue-400">
+                                        Environment variable detected and automatically synchronized.
+                                    </span>
+                                )}
+                            </p>
                         </div>
-                        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                            This DID is required for mediator connections.
-                            {!isMediatorManaged && serverMediatorDID && (
-                                <span className="block mt-1 text-blue-600 dark:text-blue-400 text-xs">
-                                    Environment variable detected and automatically synchronized to database.
-                                </span>
-                            )}
-                        </p>
-                    </div>
-                    
-                    <div>
-                        <label htmlFor="resolverUrl" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            PRISM DID Resolver URL
-                            {isResolverManaged && (
-                                <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">
-                                    Server Managed
-                                </span>
-                            )}
-                            {!isResolverManaged && serverResolverUrl && (
-                                <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400">
-                                    Auto-synced from Environment
-                                </span>
-                            )}
-                        </label>
-                        <div className="mt-1 flex gap-4">
+
+                        {/* Resolver URL */}
+                        <div>
+                            <div className="flex items-center gap-2 mb-2">
+                                <label htmlFor="resolverUrl" className="block text-sm font-medium text-gray-800 dark:text-white">
+                                    PRISM DID Resolver URL
+                                </label>
+                                {isResolverManaged && (
+                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">
+                                        <Server className="w-3 h-3" />
+                                        Server Managed
+                                    </span>
+                                )}
+                                {!isResolverManaged && serverResolverUrl && (
+                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300">
+                                        <RefreshCw className="w-3 h-3" />
+                                        Auto-synced
+                                    </span>
+                                )}
+                            </div>
+                            
                             {isResolverManaged ? (
-                                <div className="flex-1 px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md text-gray-500 dark:text-gray-400">
-                                    Managed value (configured via environment variable)
+                                <div className="flex items-center gap-3 px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+                                    <Globe className="w-4 h-4 text-gray-500" />
+                                    <span className="text-gray-600 dark:text-gray-400">
+                                        Managed value (configured via environment variable)
+                                    </span>
                                 </div>
                             ) : (
                                 <input
@@ -246,51 +326,79 @@ function SettingsPage({
                                     value={resolverUrl}
                                     onChange={(e) => setResolverUrl(e.target.value)}
                                     placeholder="Enter the PRISM DID resolver URL"
-                                    className="flex-1 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                    className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
                                 />
                             )}
+                            
+                            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                                Required for resolving PRISM decentralized identifiers.
+                                {!isResolverManaged && serverResolverUrl && (
+                                    <span className="block mt-1 text-blue-600 dark:text-blue-400">
+                                        Environment variable detected and automatically synchronized.
+                                    </span>
+                                )}
+                            </p>
                         </div>
-                        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                            This URL is required for resolving PRISM DIDs.
-                            {!isResolverManaged && serverResolverUrl && (
-                                <span className="block mt-1 text-blue-600 dark:text-blue-400 text-xs">
-                                    Environment variable detected and automatically synchronized to database.
-                                </span>
-                            )}
-                        </p>
                     </div>
-                    
-                    {hasUserManageableSettings && (
-                        <div className="flex justify-end">
-                            <button
-                                onClick={handleSaveAll}
-                                disabled={loading}
-                                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {loading ? "Saving..." : "Save Settings"}
-                            </button>
-                        </div>
-                    )}
                 </div>
-            </div>
 
-            {result && (
-                <div className={`mt-4 p-4 rounded-md ${result.success ? 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-400' : 'bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-400'}`}>
-                    <p>{result.message}</p>
-                </div>
-            )}
+                {/* Save Button */}
+                {hasUserManageableSettings && (
+                    <div className="flex justify-end">
+                        <button
+                            onClick={handleSaveAll}
+                            disabled={loading}
+                            className="group inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-teal-500 to-green-500 text-white rounded-full font-medium hover:from-teal-600 hover:to-green-600 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {loading ? (
+                                <>
+                                    <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                                    Saving...
+                                </>
+                            ) : (
+                                <>
+                                    <Save className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
+                                    Save Settings
+                                </>
+                            )}
+                        </button>
+                    </div>
+                )}
+
+                {/* Result Message */}
+                {result && (
+                    <div className={`p-4 rounded-xl border ${
+                        result.success 
+                            ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' 
+                            : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
+                    }`}>
+                        <div className="flex items-center gap-3">
+                            {result.success ? (
+                                <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
+                            ) : (
+                                <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
+                            )}
+                            <p className={result.success 
+                                ? 'text-green-800 dark:text-green-400 font-medium' 
+                                : 'text-red-800 dark:text-red-400 font-medium'
+                            }>
+                                {result.message}
+                            </p>
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }
-
-
 
 export const getServerSideProps = getLayoutProps;
 // Create a properly typed wrapped component
 const WrappedSettingsPage = withLayout(SettingsPage as any, {
     title: "Settings",
     description: "Configure your agent settings for blockchain interactions and DID resolution",
-    pageHeader: true
+    pageHeader: true,
+    icon: <Settings className="w-5 h-5" />
 });
 
 // Export the wrapped component
