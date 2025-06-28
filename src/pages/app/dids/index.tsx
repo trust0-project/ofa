@@ -6,7 +6,9 @@ import { ErrorAlert } from "@/components/ErrorAlert";
 import { useDatabase } from "@trust0/identus-react/hooks";
 import { GroupedDIDs } from "@/utils/types";
 import withLayout from "@/components/withLayout";
+import { getLayoutProps } from "@/components/withLayout";
 
+export const getServerSideProps = getLayoutProps;
 function DIDsPage() {
     const { db, getGroupedDIDs } = useDatabase();
     const router = useRouter();

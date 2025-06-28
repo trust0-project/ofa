@@ -1,8 +1,6 @@
-import Head from "next/head";
-import Layout from "@/components/Layout";
-import PageHeader from "@/components/PageHeader";
+
 import Link from "next/link";
-import { useDatabase } from "@trust0/identus-react/hooks";
+import { useDatabase, usePeerDID, usePrismDID } from "@trust0/identus-react/hooks";
 import { useEffect, useState } from "react";
 import SDK from '@hyperledger/identus-sdk';
 import { v4 as uuidv4 } from 'uuid';
@@ -26,9 +24,9 @@ type IssuanceRequest = {
 };
 
 function IssuanceRequestsPage() {
-    const { db, error: dbError, getIssuanceFlows, state: dbState } = useDatabase();
+    const {  error: dbError, getIssuanceFlows, state: dbState } = useDatabase();
     const { agent } = useAgent();
-    const peerDID =null;
+    const { peerDID } = usePeerDID();
     const [issuanceRequests, setIssuanceRequests] = useState<IssuanceRequest[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);

@@ -5,10 +5,11 @@ import { v4 as uuidv4 } from "uuid";
 import { DIDSelector } from "@/components/DIDSelector";
 import { DIDAlias } from "@/utils/types";
 import SDK from "@hyperledger/identus-sdk";
-import { DragDropContext, Droppable, Draggable, DropResult, DroppableProvided, DraggableProvided } from "react-beautiful-dnd";
+import { DragDropContext, Droppable, Draggable, DropResult, DraggableProvided } from "react-beautiful-dnd";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDatabase } from "@trust0/identus-react/hooks";
 import withLayout from "@/components/withLayout";
+import { getLayoutProps } from "@/components/withLayout";
 
 type Claim = {
     id: string;
@@ -49,6 +50,10 @@ const claimTemplates: ClaimTemplate[] = [
         ]
     }
 ];
+
+
+export const getServerSideProps = getLayoutProps;
+
 
 function CreateIssuanceRequestPage() {
     const { db, error: dbError, createIssuanceFlow } = useDatabase();
@@ -191,8 +196,8 @@ function CreateIssuanceRequestPage() {
                             >{
                                     Object.values(SDK.Domain.CredentialType)
                                         .filter((format) => format !== SDK.Domain.CredentialType.Unknown && format !== SDK.Domain.CredentialType.W3C && format !== SDK.Domain.CredentialType.AnonCreds)
-                                        .map((format) => (
-                                            <option key={format} value={format}>{format}</option>
+                                        .map((format, i) => (
+                                            <option key={`Credentialformat-${format+i}`} value={format}>{format}</option>
                                         ))
                                 }
                             </select>
@@ -255,7 +260,7 @@ function CreateIssuanceRequestPage() {
                                             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                                                 {claimTemplates.map((template, idx) => (
                                                     <button
-                                                        key={idx}
+                                                        key={idx+template.name}
                                                         type="button"
                                                         onClick={() => applyTemplate(template)}
                                                         className="p-3 text-left bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-md transition-colors border border-gray-200 dark:border-gray-600"

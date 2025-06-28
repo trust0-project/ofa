@@ -1,19 +1,21 @@
 import type React from "react";
 import SDK from "@hyperledger/identus-sdk";
 import { useEffect, useState } from "react";
-import { useDatabase } from "@trust0/identus-react/hooks";
+import { useDatabase, usePeerDID, useCredentials } from "@trust0/identus-react/hooks";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import AgentRequire from "@/components/AgentRequire";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { base64 } from "multiformats/bases/base64";
-import { Message } from "@/components/Message";
 import { Credential } from "@/components/Credential";
-import { useAgent, useIssuer } from "@trust0/identus-react/hooks";
+import { useAgent } from "@trust0/identus-react/hooks";
 import withLayout from "@/components/withLayout";
+import { OfferCredential } from "@/components/messages";
+import { getLayoutProps } from "@/components/withLayout";
 
+export const getServerSideProps = getLayoutProps;
 
-function CredentialOffer({ message }: { message: SDK.Domain.Message }) {
+function CredentialOffer({ message, onReject }: { message: SDK.Domain.Message, onReject: () => void }) {
     const { agent } = useAgent();
     if (!agent || agent.state !== SDK.Domain.Startable.State.RUNNING) {
         return <div className="p-4 rounded-md bg-yellow-50 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-400">
@@ -21,19 +23,18 @@ function CredentialOffer({ message }: { message: SDK.Domain.Message }) {
         </div>
     }
     return <AgentRequire>
-        <Message message={message} />
+        <OfferCredential message={message} onReject={onReject} />
     </AgentRequire>
 }
 
 function CredentialsPage() {
-    const peerDID = null
+    const { peerDID } = usePeerDID();
     const router = useRouter();
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const [credentials, setCredentials] = useState<SDK.Domain.Credential[]>([]);
-    const { db, pluto } = useDatabase();
     const [message, setMessage] = useState<SDK.Domain.Message | undefined>();
-
+    const { fetchCredentials } = useCredentials();
     useEffect(() => {
         if (peerDID) {
             const oob = searchParams.get('oob');
@@ -46,22 +47,20 @@ function CredentialsPage() {
                     from: message.from,
                     to: peerDID,
                 }));
-
-                // Clean the URL after processing the message
                 router.replace(pathname);
             }
         }
     }, [searchParams, peerDID, router, pathname]);
 
     useEffect(() => {
-        if (db) {
-            pluto.getAllCredentials().then(setCredentials)
-        }
-    }, [db, pluto]);
+        fetchCredentials().then(setCredentials);
+    }, [fetchCredentials]);
 
     return (
         <>
-            {message && <CredentialOffer message={message} />}
+            {message && <CredentialOffer message={message} onReject={() => {
+                setMessage(undefined);
+            }} />}
 
             {credentials.length > 0 ? (
                 <div className="mt-5">

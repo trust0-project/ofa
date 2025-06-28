@@ -1,14 +1,16 @@
 import { ErrorAlert } from "@/components/ErrorAlert";
-import {  useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Message } from "@/components/Message";
 import { useMessages } from "@trust0/identus-react/hooks";
 import withLayout from "@/components/withLayout";
+import { getLayoutProps } from "@/components/withLayout";
 
+export const getServerSideProps = getLayoutProps;
 function MessageDetails() {
     const { messages, readMessage } = useMessages();
-    const query = useSearchParams();
-    const id = query.get("id");
+    const params = useParams();
+    const id = params?.id as string;
     const [error, setError] = useState<string | null>(null);
 
     const message = messages.find((message) => message.message.id === id);
@@ -33,7 +35,6 @@ function MessageDetails() {
     return <div className="bg-background-light dark:bg-background-dark hadow-sm">
             <div className="space-y-6">
                 <Message message={msg} />
-
             </div>
         </div>
    

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useDatabase } from "@trust0/identus-react/hooks";
+import { useDatabase, usePrismDID } from "@trust0/identus-react/hooks";
 import { DIDAlias, GroupedDIDs } from "@/utils/types";
 
 interface DIDSelectorProps {
@@ -15,6 +15,7 @@ export function DIDSelector({
     label = "Select a DID",
     className = ""
 }: DIDSelectorProps) {
+    const { create } = usePrismDID()
     const { db, getGroupedDIDs } = useDatabase();
     const [groupedDIDs, setGroupedDIDs] = useState<GroupedDIDs>({});
     const [error, setError] = useState<string | null>(null);
@@ -80,7 +81,29 @@ export function DIDSelector({
             {error ? (
                 <div className="text-sm text-red-500">{error}</div>
             ) : !hasAnyDIDs ? (
-                <div className="text-sm text-gray-500 dark:text-gray-400">No DIDs available</div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">
+                    No DIDs available
+                    <button 
+                                                            className="px-3 py-1.5 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 flex items-center"
+
+                    onClick={async () => {
+                        try {
+                            await create("Issuance DID");
+                            // Reload DIDs after creation
+                            const { prism = [], ...dids } = await getGroupedDIDs();
+                            const groupedData = {
+                                prism,
+                                ...dids
+                            };
+                            setGroupedDIDs(groupedData);
+                            setFlatDIDs(Object.values(groupedData).flat());
+                        } catch (err: any) {
+                            setError(err.message);
+                        }
+                    }}>
+                        Create
+                    </button>
+                    </div>
             ) : (
                 <select
                     className="block w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-blue-500 focus:border-blue-500"

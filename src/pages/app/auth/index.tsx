@@ -27,9 +27,7 @@ export default function Auth() {
                 password,
                 storageType: StorageType.IndexDB,
             });
-
             router.replace(redirectUrl || "/app");
-
         } catch (err) {
             setError((err as Error).message);
         }

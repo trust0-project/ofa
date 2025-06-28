@@ -4,7 +4,6 @@ import { ReactNode, useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { WalletSelect } from './WalletSelect';
 import { AgentStart } from './AgentStart';
-import SDK from "@hyperledger/identus-sdk";
 import Image from 'next/image';
 import Head from 'next/head';
 import PageHeader from './PageHeader';
@@ -14,9 +13,12 @@ import { AgentGaugeSVG } from './AgentGaugeSVG';
 import { PeerDIDCopy } from './PeerDIDCopy';
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useDatabase } from '@trust0/identus-react/hooks';
+import { useAgent, useDatabase, useMessages } from '@trust0/identus-react/hooks';
 import { useRouter as useCustomRouter } from '@/hooks';
-interface LayoutProps {
+import { getLayoutProps, PageProps } from './withLayout';
+import SDK from '@hyperledger/identus-sdk';
+
+interface LayoutProps extends PageProps {
     children: ReactNode;
     title?: string;
     description?: string;
@@ -37,48 +39,30 @@ type NavigationItem = NavItem | NavGroup;
 
 
 
-const agentRoutes = [
-    {
-        label: 'Agent',
-        children: [
-            { path: '/app/issuance-requests', label: 'Issue Credentials' },
-            { path: '#', label: 'Verify Credentials' },
-        ]
-    },
-];
-
-const holderRoutes = [
-    {
-        label: 'Identity',
-        children: [
-            { path: '/app/credentials', label: 'Credentials' },
-        ]
-    },
-];
-
-// export type ResolverClass = new (apollo: SDK.Domain.Apollo) => SDK.Domain.DIDResolver;
-
 
 const DEFAULT_TITLE = 'Hyperledger Identus Agent';
 const DEFAULT_DESCRIPTION = 'Dashboard for managing your self-sovereign identity';
+
 
 
 export default function Layout({
     children,
     title = DEFAULT_TITLE,
     description = DEFAULT_DESCRIPTION,
-    pageHeader = true
+    pageHeader = true,
+    isMediatorManaged,
+    serverMediatorDID,
 }: LayoutProps) {
-    const messages: any = [];
     const {
         getMediator,
         getSeed,
         getWallet,
+        setMediator,
         state: dbState,
         error: dbError,
-        features,
-        db
     } = useDatabase();
+
+    const {unreadMessages} = useMessages();
 
     const [notificationsOpen, setNotificationsOpen] = useState(false);
     const [agentControlsOpen, setAgentControlsOpen] = useState(false);
@@ -90,6 +74,7 @@ export default function Layout({
     const { setRedirectUrl } = useCustomRouter();
 
     const currentRoute = usePathname();
+    const {start} = useAgent();
     
     // Get the full URL path including search parameters (equivalent to router.asPath)
     const getFullPath = useCallback(() => {
@@ -101,6 +86,14 @@ export default function Layout({
     useEffect(() => {
         setIsSidebarOpen(false);
     }, [currentRoute]);
+
+    const currentMediator = useCallback(async () => {
+        if (serverMediatorDID) {
+            await setMediator(SDK.Domain.DID.fromString(serverMediatorDID));
+            return serverMediatorDID;
+        }
+        return await getMediator();
+    }, [serverMediatorDID, getMediator, setMediator]);
 
     useEffect(() => {
         async function load() {
@@ -119,8 +112,8 @@ export default function Layout({
                     router.replace("/app/mnemonics");
                     return
                 }
-                const storedMediatorDID = await getMediator();
-                if (currentRoute !== "/app/mediator" && seed && !storedMediatorDID) {
+                const storedMediatorDID = await currentMediator();
+                if (currentRoute !== "/app/mediator" && seed && !storedMediatorDID && !isMediatorManaged) {
                     router.replace("/app/mediator");
                     return
                 }
@@ -128,50 +121,36 @@ export default function Layout({
                 if (walletId) {
                     await connect(walletId);
                 }
+                setTimeout(() => setLoaded(true), 100)
+                await start();      
             }
-            
         }
-        load().then(() => setTimeout(() => setLoaded(true), 100))
-    }, [dbState, dbError, getMediator, getSeed, getWallet, connect, router, currentRoute, getFullPath, setRedirectUrl]);
+        load()
+    }, [dbState, dbError, getMediator, getSeed, getWallet, connect, router, currentRoute, getFullPath, setRedirectUrl, start, isMediatorManaged, currentMediator]);
     
 
     const navItems: NavigationItem[] = [
         { path: '/app', label: 'Home' },
+        { path: '/app/messages', label: 'Messages' },
+        {
+            label: 'Identity',
+            children: [
+                { path: '/app/credentials', label: 'Credentials' },
+                { path: '/app/issuance-requests', label: 'Issue Credentials' },
+                { path: '#', label: 'Verify Credentials' },
+
+            ]
+        },
+        {
+            label: 'Manage',
+            children: [
+                { path: '/app/dids', label: 'DIDs' },
+                { path: '/app/connections', label: 'Connections' },
+                { path: '/app/settings', label: 'Settings' },
+            ]
+        }
     ];
 
-    navItems.push(...[{
-        label: 'DIDs',
-        children: [
-            { path: '/app/dids', label: 'DIDs' },
-        ]
-    }]);
-
-    if (features.includes('agent')) {
-        navItems.push(...agentRoutes);
-    }
-
-    if (features.includes('holder')) {
-        navItems.push(...holderRoutes);
-    }
-
-    navItems.push(...[{
-        label: 'DIDComm',
-        children: [
-            { path: '/app/messages', label: 'Messages' },
-            { path: '/app/connections', label: 'Connections' },
-        ]
-    },
-    {
-        label: 'Config',
-        children: [
-            { path: '/app/settings', label: 'Settings' },
-        ]
-    }]);
-
-
-    const unreadMessages = messages.filter(({ read }: any) => !read);
-    const unreadCount = unreadMessages.length;
-    // Type guard to check if item is a NavGroup
     const isNavGroup = (item: NavigationItem): item is NavGroup => 'children' in item;
     // eslint-disable-next-line prefer-const
     if (!loaded) {
@@ -217,14 +196,14 @@ export default function Layout({
                                         <div className="max-h-96 overflow-y-auto">
                                             {unreadMessages.length > 0 ? (
                                                 <div>
-                                                    {unreadMessages.map((notification: any) => {
+                                                    {unreadMessages.map((notification) => {
                                                         return <div
-                                                            key={notification.message.id}
-                                                            className={`px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 ${!notification.read ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
+                                                            key={`header-notification-${notification.uuid}`}
+                                                            className={`px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700}`}
                                                         >
                                                             <p onClick={() => {
-                                                                router.push(`/app/messages/${notification.message.id}`);
-                                                            }} className="text-sm text-gray-700 dark:text-gray-300">{notification.message.piuri}</p>
+                                                                router.push(`/app/messages/${notification.id}`);
+                                                            }} className="text-sm text-gray-700 dark:text-gray-300">{notification.piuri}</p>
                                                         </div>
                                                     })}
                                                 </div>
@@ -242,9 +221,9 @@ export default function Layout({
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                                     </svg>
-                                    {unreadCount > 0 && (
+                                    {unreadMessages.length > 0 && (
                                         <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full">
-                                            {unreadCount}
+                                            {unreadMessages.length}
                                         </span>
                                     )}
                                 </button>

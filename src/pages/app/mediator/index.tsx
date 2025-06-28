@@ -7,7 +7,9 @@ import { useRouter } from "next/navigation";
 import AgentRequire from "@/components/AgentRequire";
 import { MEDIATOR_DID } from "@/config";
 import { useDatabase } from "@trust0/identus-react/hooks";
+import { getLayoutProps } from "@/components/withLayout";
 
+export const getServerSideProps = getLayoutProps;
 export default function Mediator() {
     const { storeSettingsByKey } = useDatabase();
     const router = useRouter();

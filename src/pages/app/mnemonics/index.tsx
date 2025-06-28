@@ -6,11 +6,16 @@ import { useRouter } from "next/navigation";
 import { useDatabase } from "@trust0/identus-react/hooks";
 import { useApollo } from "@trust0/identus-react/hooks";
 import AgentRequire from "@/components/AgentRequire";
+import { getLayoutProps, PageProps } from "@/components/withLayout";
+import { useRouter as useCustomRouter } from "@/hooks";
 
-export default function Mnemonics() {
+export const getServerSideProps = getLayoutProps;
+
+export default function Mnemonics(props: PageProps) {
     const apollo = useApollo();
     const router = useRouter();
     const { setSeed } = useDatabase();
+    const { redirectUrl } = useCustomRouter();
     
     const [mnemonics, setMnemonics] = useState<string[]>([]);
 
@@ -26,7 +31,7 @@ export default function Mnemonics() {
         if (mnemonics.length === 24) {
             const seed = apollo.createSeed(mnemonics as any);
             await setSeed(seed);
-            router.push('/app/mediator');
+            router.push(!props.isMediatorManaged ? '/app/mediator' : redirectUrl || '/app');
         }
     }
 

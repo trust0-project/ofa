@@ -21,6 +21,7 @@ export function useMessageStatus(message: SDK.Domain.Message) {
 
     return {
         hasResponse,
-        hasAnswered
+        hasAnswered,
+        isReceived: message.direction === SDK.Domain.MessageDirection.RECEIVED,
     };
 }

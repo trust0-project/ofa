@@ -1,11 +1,41 @@
 import React, { ComponentType } from 'react';
 import Layout from './Layout';
+import { GetServerSideProps } from 'next';
 
 interface LayoutOptions {
     title?: string;
     description?: string;
     pageHeader?: boolean;
 }
+export interface PageProps {
+    serverBlockfrostKey: string | null;
+    serverMediatorDID: string | null;
+    serverResolverUrl: string | null;
+    isBlockfrostManaged: boolean;
+    isMediatorManaged: boolean;
+    isResolverManaged: boolean;
+}
+
+export const getLayoutProps: GetServerSideProps<PageProps> = async () => {
+    const serverBlockfrostKey = process.env.BLOCKFROST_API_KEY || null;
+    const serverMediatorDID = process.env.MEDIATOR_DID_URL || null;
+    const serverResolverUrl = process.env.PRISM_RESOLVER_URL || null;
+    return {
+        props: {
+            serverBlockfrostKey,
+            serverMediatorDID,
+            serverResolverUrl,
+            isBlockfrostManaged: !!serverBlockfrostKey,
+            isMediatorManaged: !!serverMediatorDID,
+            isResolverManaged: !!serverResolverUrl,
+        },
+    };
+};
+
+
+
+
+export const getServerSideProps = getLayoutProps;
 
 /**
  * Higher-order component that wraps a page component with Layout
@@ -13,13 +43,13 @@ interface LayoutOptions {
  * @param layoutOptions - Configuration options for the Layout component
  * @returns A new component wrapped with Layout
  */
-export function withLayout<T extends Record<string, unknown> = Record<string, unknown>>(
+export function withLayout<T extends PageProps>(
     PageComponent: ComponentType<T>,
     layoutOptions: LayoutOptions = {}
 ) {
     const WrappedComponent = (props: T) => {
         return (
-            <Layout {...layoutOptions}>    
+            <Layout {...layoutOptions} {...props}>    
                 <PageComponent {...(props as T)} />
             </Layout>
         );

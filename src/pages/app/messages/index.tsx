@@ -2,8 +2,11 @@ import Link from "next/link";
 import SDK from '@hyperledger/identus-sdk';
 import { useMessages } from "@trust0/identus-react/hooks";
 import { withLayout } from "@/components/withLayout";
+import { getLayoutProps } from "@/components/withLayout";
 
+export const getServerSideProps = getLayoutProps;
 function MessagesPage() {
+    
     const { messages, deleteMessage } = useMessages();
 
     const handleDeleteMessage = async (message: SDK.Domain.Message) => {
@@ -23,11 +26,11 @@ function MessagesPage() {
                 </div>
             ) : (
                 <div className="grid grid-cols-1 gap-4">
-                    {messages.map((message) => {
+                    {messages.map((message,i) => {
                         const msg = message.message;
                         return (
                             <div
-                                key={msg.id}
+                                key={`message-list-${msg.id+i}`}
                                 className="relative block p-4 border border-border-light dark:border-border-dark rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                             >
                                 <Link

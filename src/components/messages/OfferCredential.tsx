@@ -1,16 +1,14 @@
 import SDK from "@hyperledger/identus-sdk";
-import { useAgent } from "@trust0/identus-react/hooks";
-import { useRouter } from "next/navigation";
+import { useAgent, useMessages } from "@trust0/identus-react/hooks";
 import { useMessageStatus } from "./utils";
 import { useEffect, useState } from "react";
 
-export function OfferCredential(props: { message: SDK.Domain.Message }) {
-    const { message } = props;
+export function OfferCredential(props: { message: SDK.Domain.Message, onReject?: () => void }) {
+    const { message, onReject } = props;
     const { agent } = useAgent();
+    const { deleteMessage } = useMessages();
     const { hasResponse, hasAnswered } = useMessageStatus(message);
     const [isAnswering, setIsAnswering] = useState(false);
-
-    const router = useRouter();
     const body = message.body;
 
     useEffect(() => {
@@ -33,6 +31,14 @@ export function OfferCredential(props: { message: SDK.Domain.Message }) {
         } catch (err) {
             console.log("continue after err", err);
         }
+    }
+
+    async function onHandleReject(message: SDK.Domain.Message) {
+       if (onReject) {
+        onReject();
+       } else {
+        await deleteMessage(message);
+       }
     }
 
     return <div
@@ -79,9 +85,12 @@ export function OfferCredential(props: { message: SDK.Domain.Message }) {
                             onClick={() => onHandleAccept(message)}>
                             Accept
                         </button>
-                        <button className="mt-5 mx-5 inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900" style={{ width: 120 }} onClick={() => {
-                            router.push("/app/credentials");
-                        }}>Reject</button>
+                        <button 
+                        className="mt-5 mx-5 inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900" 
+                        style={{ width: 120 }} 
+                        onClick={() => onHandleReject(message)}>
+                            Reject
+                    </button>
                     </>
                 }
             </>}
