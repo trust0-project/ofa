@@ -28,16 +28,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'yarn'
           
-      - name: Enable Corepack
-        run: corepack enable
-        
-      - name: Prepare Yarn
-        run: corepack prepare yarn@4.9.1 --activate
+      - name: Enable Corepack and set up Yarn
+        run: |
+          corepack enable
+          yarn --version
           
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install
         
       - name: Build application
         env:
