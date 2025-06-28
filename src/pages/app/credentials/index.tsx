@@ -1,7 +1,7 @@
 import type React from "react";
 import SDK from "@hyperledger/identus-sdk";
 import { useEffect, useState } from "react";
-import { useDatabase, usePeerDID, useCredentials } from "@trust0/identus-react/hooks";
+import {  usePeerDID, useCredentials } from "@trust0/identus-react/hooks";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { CreditCard, AlertTriangle, CheckCircle } from "lucide-react";
 import AgentRequire from "@/components/AgentRequire";

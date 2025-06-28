@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { BLOCKFROST_KEY_NAME, PRISM_RESOLVER_URL_KEY, FEATURES, MEDIATOR_DID } from "@/config";
-import { useDatabase } from "@trust0/identus-react/hooks";
+import { useDatabase, usePluto } from "@trust0/identus-react/hooks";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import withLayout from "@/components/withLayout";
 import { getLayoutProps } from "@/components/withLayout";
@@ -15,7 +15,8 @@ import {
     Server,
     RefreshCw,
     Eye,
-    EyeOff
+    EyeOff,
+    Upload
 } from "lucide-react";
 
 interface PageProps {
@@ -48,7 +49,9 @@ function SettingsPage({
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState<{ success: boolean, message: string } | null>(null);
     const [showBlockfrostKey, setShowBlockfrostKey] = useState(false);
-
+    const [restoreLoading, setRestoreLoading] = useState(false);
+    const [restoreResult, setRestoreResult] = useState<{ success: boolean, message: string } | null>(null);
+    const pluto = usePluto();
     useEffect(() => {
         async function load() {
             if (dbState === "loaded") {
@@ -135,6 +138,45 @@ function SettingsPage({
             });
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleRestore = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        setRestoreLoading(true);
+        setRestoreResult(null);
+
+        try {
+            // Read the file content
+            const fileContent = await new Promise<string>((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target?.result as string);
+                reader.onerror = () => reject(new Error('Failed to read file'));
+                reader.readAsText(file);
+            });
+
+            // Parse the JSON backup data
+            const backupData = JSON.parse(fileContent);
+
+            // Restore the backup using pluto
+            await pluto.restore(backupData);
+
+            setRestoreResult({
+                success: true,
+                message: 'Backup successfully restored! Please refresh the page to see the changes.'
+            });
+
+            // Clear the file input
+            event.target.value = '';
+        } catch (error) {
+            setRestoreResult({
+                success: false,
+                message: error instanceof Error ? error.message : 'Failed to restore backup'
+            });
+        } finally {
+            setRestoreLoading(false);
         }
     };
 
@@ -338,6 +380,118 @@ function SettingsPage({
                                     </span>
                                 )}
                             </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="bg-white/95 dark:bg-[#0A0A0A]/95 backdrop-blur-lg rounded-2xl border border-gray-200 dark:border-gray-800 p-6 shadow-lg">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="w-8 h-8 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/50 dark:to-pink-900/50 rounded-lg flex items-center justify-center">
+                            <Settings className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Backup & Restore</h3>
+                    </div>
+                    
+                    <div className="space-y-6">
+                        {/* Export Backup */}
+                        <div className="p-4 bg-gray-50/50 dark:bg-gray-800/30 rounded-xl">
+                            <label className="block text-sm font-medium text-gray-800 dark:text-white mb-3">
+                                Export Backup
+                            </label>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                                Export encrypted JWE backup of the Agent data (not application). You will be required to restore it in an agent with the same seed imported.
+                            </p>
+                            <button
+                                onClick={async () => {
+                                    try {
+                                        const backup = await pluto.backup();
+                                        
+                                        // Convert JSON object to string
+                                        const backupString = JSON.stringify(backup, null, 2);
+                                        
+                                        // Create blob with the backup data
+                                        const blob = new Blob([backupString], { type: 'text/plain' });
+                                        
+                                        // Create a temporary URL for the blob
+                                        const url = URL.createObjectURL(blob);
+                                        
+                                        // Create a temporary anchor element and trigger download
+                                        const a = document.createElement('a');
+                                        a.href = url;
+                                        a.download = `backup.txt`;
+                                        document.body.appendChild(a);
+                                        a.click();
+                                        
+                                        // Clean up
+                                        document.body.removeChild(a);
+                                        URL.revokeObjectURL(url);
+                                    } catch (error) {
+                                        console.error('Failed to export backup:', error);
+                                        // You could also show an error message to the user here
+                                    }
+                                }}
+                                disabled={loading}
+                                className="group inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-teal-500 to-green-500 text-white rounded-full font-medium hover:from-teal-600 hover:to-green-600 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Export Backup
+                            </button>
+                        </div>
+
+                        {/* Import/Restore Backup */}
+                        <div className="p-4 bg-gray-50/50 dark:bg-gray-800/30 rounded-xl">
+                            <label className="block text-sm font-medium text-gray-800 dark:text-white mb-3">
+                                Restore Backup
+                            </label>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                                Upload and restore a previously exported backup file. This will replace all current agent data.
+                            </p>
+                            <div className="flex items-center gap-4">
+                                <label className="relative cursor-pointer">
+                                    <input
+                                        type="file"
+                                        accept=".txt,.json"
+                                        onChange={handleRestore}
+                                        disabled={restoreLoading}
+                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+                                    />
+                                    <div className="group inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full font-medium hover:from-blue-600 hover:to-purple-600 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50">
+                                        {restoreLoading ? (
+                                            <>
+                                                <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                                                Restoring...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Upload className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
+                                                Choose Backup File
+                                            </>
+                                        )}
+                                    </div>
+                                </label>
+                            </div>
+                            
+                            {/* Restore Result Message */}
+                            {restoreResult && (
+                                <div className={`mt-4 p-3 rounded-lg border ${
+                                    restoreResult.success 
+                                        ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' 
+                                        : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
+                                }`}>
+                                    <div className="flex items-center gap-2">
+                                        {restoreResult.success ? (
+                                            <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400" />
+                                        ) : (
+                                            <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400" />
+                                        )}
+                                        <p className={`text-sm ${restoreResult.success 
+                                            ? 'text-green-800 dark:text-green-400' 
+                                            : 'text-red-800 dark:text-red-400'
+                                        }`}>
+                                            {restoreResult.message}
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
