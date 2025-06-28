@@ -1,6 +1,6 @@
 'use client'
 import { withLayout, getLayoutProps } from "@/components/withLayout";
-import { GetStaticProps } from "next";
+import { getServerSideProps } from "next";
 import Link from "next/link";
 
 type FeatureBlock = {
@@ -96,7 +96,7 @@ function Dashboard() {
     );
 } 
 
-export const getStaticProps = getLayoutProps;
+export const getServerSideProps = getLayoutProps;
     
 // Export the component wrapped with layout
 export default withLayout(Dashboard, {

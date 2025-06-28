@@ -9,7 +9,7 @@ import { MEDIATOR_DID } from "@/config";
 import { useDatabase } from "@trust0/identus-react/hooks";
 import { getLayoutProps, PageProps } from "@/components/withLayout";
 
-export const getStaticProps = getLayoutProps;
+export const getServerSideProps = getLayoutProps;
 
 
 export default function Mediator({

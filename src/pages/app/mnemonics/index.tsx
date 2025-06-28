@@ -9,7 +9,7 @@ import AgentRequire from "@/components/AgentRequire";
 import { getLayoutProps, PageProps } from "@/components/withLayout";
 import { useRouter as useCustomRouter } from "@/hooks";
 
-export const getStaticProps = getLayoutProps;
+export const getServerSideProps = getLayoutProps;
 
 export default function Mnemonics(props: PageProps) {
     const apollo = useApollo();

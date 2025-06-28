@@ -1,6 +1,6 @@
 import React, { ComponentType } from 'react';
 import Layout from './Layout';
-import { GetStaticProps } from 'next';
+import { GetServerSideProps, getServerSideProps } from 'next';
 
 interface LayoutOptions {
     title?: string;
@@ -16,7 +16,7 @@ export interface PageProps {
     isResolverManaged: boolean;
 }
 
-export const getLayoutProps: GetStaticProps<PageProps> = async () => {
+export const getLayoutProps: GetServerSideProps<PageProps> = async () => {
     const serverBlockfrostKey = process.env.BLOCKFROST_API_KEY || null;
     const serverMediatorDID = process.env.MEDIATOR_DID || null;
     const serverResolverUrl = process.env.PRISM_RESOLVER_URL || null;
@@ -35,7 +35,7 @@ export const getLayoutProps: GetStaticProps<PageProps> = async () => {
 
 
 
-export const getStaticProps = getLayoutProps;
+export const getServerSideProps = getLayoutProps;
 
 /**
  * Higher-order component that wraps a page component with Layout

@@ -52,7 +52,7 @@ const claimTemplates: ClaimTemplate[] = [
 ];
 
 
-export const getStaticProps = getLayoutProps;
+export const getServerSideProps = getLayoutProps;
 
 
 function CreateIssuanceRequestPage() {

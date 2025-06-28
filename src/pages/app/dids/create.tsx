@@ -3,7 +3,7 @@ import { useAgent } from "@trust0/identus-react/hooks";
 import withLayout from "@/components/withLayout";
 import { getLayoutProps } from "@/components/withLayout";
 
-export const getStaticProps = getLayoutProps;
+export const getServerSideProps = getLayoutProps;
 function DIDsPage() {
     const { agent } = useAgent();
     const [alias, setAlias] = useState<string>("");
