@@ -1,6 +1,5 @@
 'use client'
 import { withLayout, getLayoutProps } from "@/components/withLayout";
-import { getServerSideProps } from "next";
 import Link from "next/link";
 
 type FeatureBlock = {

@@ -1,6 +1,6 @@
 import React, { ComponentType } from 'react';
 import Layout from './Layout';
-import { GetServerSideProps, getServerSideProps } from 'next';
+import { GetServerSideProps } from 'next';
 
 interface LayoutOptions {
     title?: string;
