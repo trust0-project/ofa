@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { BLOCKFROST_KEY_NAME, PRISM_RESOLVER_URL_KEY, FEATURES, MEDIATOR_DID } from "@/config";
-import { useDatabase, usePluto } from "@trust0/identus-react/hooks";
+import { useDatabase } from "@trust0/identus-react/hooks";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import withLayout from "@/components/withLayout";
 import { getLayoutProps } from "@/components/withLayout";
@@ -41,6 +41,7 @@ function SettingsPage({
         getFeatures, 
         getSettingsByKey, 
         storeSettingsByKey,
+        pluto
     } = useDatabase();
     const [blockfrostKey, setBlockfrostKey] = useState("");
     const [resolverUrl, setResolverUrl] = useState("");
@@ -51,7 +52,6 @@ function SettingsPage({
     const [showBlockfrostKey, setShowBlockfrostKey] = useState(false);
     const [restoreLoading, setRestoreLoading] = useState(false);
     const [restoreResult, setRestoreResult] = useState<{ success: boolean, message: string } | null>(null);
-    const pluto = usePluto();
     useEffect(() => {
         async function load() {
             if (dbState === "loaded") {
