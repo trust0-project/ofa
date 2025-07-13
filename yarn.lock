@@ -803,9 +803,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hyperledger/identus-sdk@npm:^7.0.0-rc.10":
-  version: 7.0.0-rc.10
-  resolution: "@hyperledger/identus-sdk@npm:7.0.0-rc.10"
+"@hyperledger/identus-sdk@npm:^7.0.0-rc.12":
+  version: 7.0.0-rc.12
+  resolution: "@hyperledger/identus-sdk@npm:7.0.0-rc.12"
   dependencies:
     "@hyperledger/identus-apollo": "npm:^1.4.5"
     "@noble/ciphers": "npm:^0.6.0"
@@ -832,7 +832,7 @@ __metadata:
     core-js: ^3.32.2
     elliptic: ^6.5.4
     jsdom: ^24.1.0
-  checksum: 10c0/a40895be6165ebf32b9f5f27f77c3927565e3f62d4fb0e9ec65b95ea4b6b14ff16afc62190c4edca37f58c49f6188e5e0710bbabfcf8724b6f7623736711dd4f
+  checksum: 10c0/c8e9b735f4bd90ecda44dd1002facd25895bc0596b16cac4090565c2caa3d538ce3cafe68754c27f0d1bbac69591ff077ce057879ece797c51a435c919026d6f
   languageName: node
   linkType: hard
 
@@ -2671,43 +2671,36 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@trust0/identus-react@npm:^0.0.116":
-  version: 0.0.116
-  resolution: "@trust0/identus-react@npm:0.0.116"
+"@trust0/identus-react@npm:^0.0.124":
+  version: 0.0.124
+  resolution: "@trust0/identus-react@npm:0.0.124"
   dependencies:
-    "@trust0/identus-store": "npm:^1.0.15"
-    "@trust0/ridb": "npm:^1.5.30"
-    "@trust0/ridb-core": "npm:^1.7.25"
-    "@trust0/ridb-react": "npm:^1.4.9"
+    "@trust0/identus-store": "npm:^1.0.17"
+    "@trust0/ridb": "npm:^1.5.31"
+    "@trust0/ridb-core": "npm:^1.7.26"
+    "@trust0/ridb-react": "npm:^1.4.10"
     multiformats: "npm:^9.9.0"
     react: "npm:^18"
     react-dom: "npm:^18"
     uuid: "npm:^11.1.0"
   peerDependencies:
-    "@hyperledger/identus-sdk": ^7.0.0-rc.8
+    "@hyperledger/identus-sdk": ^7.0.0-rc.12
     react: ^18
     react-dom: ^18
-  checksum: 10c0/15a7950c5ff6ac6930c04da3025fa115960e764213aa639cd287b05240ac23aac470a2bd689b48b8d8277396bf6c6fcb0021c57375093d137f85b638ff8f0d53
+  checksum: 10c0/aac4b56efb355a79492411080f59686538f018ff12e6857ca7ce9734d5dbd263adfbeeb008419faa7b4b533e384d8c846cf128ad48aaad8a0d9759b29d547b8a
   languageName: node
   linkType: hard
 
-"@trust0/identus-store@npm:^1.0.15":
-  version: 1.0.15
-  resolution: "@trust0/identus-store@npm:1.0.15"
+"@trust0/identus-store@npm:^1.0.17":
+  version: 1.0.17
+  resolution: "@trust0/identus-store@npm:1.0.17"
   dependencies:
     uuid: "npm:^11.1.0"
   peerDependencies:
-    "@hyperledger/identus-sdk": ^7.0.0-rc.7
-    "@trust0/ridb": ^1.5.30
-    "@trust0/ridb-core": ^1.7.25
-  checksum: 10c0/b7437b06671d2b226264c4107045d83425e7810000434c50bf32e57445a6d06d0abfe5886f90f8e14c6e655e05d859b48622143001b15ddc99975f9882d619d3
-  languageName: node
-  linkType: hard
-
-"@trust0/ridb-core@npm:^1.7.25":
-  version: 1.7.25
-  resolution: "@trust0/ridb-core@npm:1.7.25"
-  checksum: 10c0/75ccb913a431e59f4fadc266273b7fd6d6db34b711a52a773863d680801aaae3fa97ed7810f241f40fe9f6322e03189033034f2fb7bf1c2fbba05338f5bf6bd6
+    "@hyperledger/identus-sdk": ^7.0.0-rc.12
+    "@trust0/ridb": ^1.5.31
+    "@trust0/ridb-core": ^1.7.26
+  checksum: 10c0/2c8096138c70c210c40c02cca1515c57e6191e75cef4dd29c77de0a181e82a4cf7f4dd51280a43882c0731cc4ba73eee86451fb4d7863ed4fafe526968cd92d6
   languageName: node
   linkType: hard
 
@@ -2726,26 +2719,6 @@ __metadata:
     react: ^18
     react-dom: ^18
   checksum: 10c0/23fc4ed1eeea3cd4a5897ad869f55668fae6f901b365cb90508875d2d2f660752ae1d97e972cfb4b4c13b336ad2b28c38514046f88b79c6a03392659282ab8ea
-  languageName: node
-  linkType: hard
-
-"@trust0/ridb-react@npm:^1.4.9":
-  version: 1.4.9
-  resolution: "@trust0/ridb-react@npm:1.4.9"
-  peerDependencies:
-    "@trust0/ridb": ^1
-    react: ^18
-    react-dom: ^18
-  checksum: 10c0/bd08ecb480e3fe1c654c1478fe2defbd5590f8a432d77233cb0e8f60364cbee3a59ea3e6d07e78b2470a94cc577a656d8c037faf0e7021c9c70f8c676d60f53a
-  languageName: node
-  linkType: hard
-
-"@trust0/ridb@npm:^1.5.30":
-  version: 1.5.30
-  resolution: "@trust0/ridb@npm:1.5.30"
-  dependencies:
-    "@trust0/ridb-core": "npm:^1.7.25"
-  checksum: 10c0/4a99aa1012204c28b50376a29fd2fe736b7798b42cf8ae1e5a33d69fd87bd48f5920bb864e54c4d29c5f596941b2e5e83f865897edb9cfe2adbb463a0e03f361
   languageName: node
   linkType: hard
 
@@ -8619,13 +8592,13 @@ __metadata:
   resolution: "offline@workspace:."
   dependencies:
     "@eslint/eslintrc": "npm:^3"
-    "@hyperledger/identus-sdk": "npm:^7.0.0-rc.10"
+    "@hyperledger/identus-sdk": "npm:^7.0.0-rc.12"
     "@meshsdk/core": "npm:^1.9.0-beta.1"
     "@meshsdk/react": "npm:^1.9.0-beta.1"
     "@paulmillr/qr": "npm:^0.3.0"
     "@stablelib/uuid": "npm:^2.0.1"
-    "@trust0/identus-react": "npm:^0.0.116"
-    "@trust0/identus-store": "npm:^1.0.15"
+    "@trust0/identus-react": "npm:^0.0.124"
+    "@trust0/identus-store": "npm:^1.0.17"
     "@trust0/ridb": "npm:^1.5.31"
     "@trust0/ridb-core": "npm:^1.7.26"
     "@trust0/ridb-react": "npm:^1.4.10"
