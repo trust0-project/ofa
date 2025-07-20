@@ -20,32 +20,35 @@ export default function AgentRequire({ children }: RequireDBProps) {
     const currentRoute = usePathname();
     useEffect(() => {
         async function load() {
-            if (dbState === 'loaded' && !dbError) {
-                const seed = await getSeed();
-                if (currentRoute !== "/app/mnemonics" && !seed) {
-                    router.replace("/app/mnemonics");
-                    return
+            try {
+                if (dbState === 'loaded' && !dbError) {
+                    const seed = await getSeed();
+                    if (currentRoute !== "/app/mnemonics" && !seed) {
+                        router.replace("/app/mnemonics");
+                        return
+                    }
+                    const storedMediatorDID = await getMediator();
+                    if (currentRoute !== "/app/mediator" && seed && !storedMediatorDID) {
+                        router.replace("/app/mediator");
+                        return
+                    }
+                    const walletId = await getWallet();
+                    if (walletId) {
+                        await connect(walletId);
+                    }
+                    if (storedMediatorDID) {
+                        setMediatorDID(storedMediatorDID);
+                    }
                 }
-                const storedMediatorDID = await getMediator();
-                if (currentRoute !== "/app/mediator" && seed && !storedMediatorDID) {
-                    router.replace("/app/mediator");
-                    return
-                }
-                const walletId = await getWallet();
-                if (walletId) {
-                    await connect(walletId);
-                }
-                if (storedMediatorDID) {
-                    setMediatorDID(storedMediatorDID);
-                }
+                setLoaded(true);
+            } catch (error) {
+                console.error('Error during agent initialization:', error);
+                // Still set loaded to true to prevent infinite loading state
+                setLoaded(true);
             }
         }
-        load().then(() => setLoaded(true))
+        load();
     }, [dbState, dbError, currentRoute, getMediator, getSeed, getWallet, connect, router]);
-
-    if (!loaded) {
-        return <Loading />
-    }
 
     return children
 } 

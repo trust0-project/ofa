@@ -19,7 +19,11 @@ import {
   Github,
   Heart,
 } from "lucide-react"
-import LOGO from "../../public/identus-navbar-light.png"
+
+
+import LOGO from "../../public/logos/ofa-dark.svg"
+import LOGOSmall from "../../public/logos/logo.png"
+import IdentusLogo from "../../public/identus-navbar-light.png"
 
 // Note: In the Next.js App Router, you should handle <head> elements
 // using the Metadata API in a Server Component, like your app/layout.tsx file.
@@ -37,7 +41,7 @@ export default function Home() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  const navLinks = [
+  const navLinks: {name: string, href: string}[] = [
     { name: "Features", href: "#features" },
     { name: "Benefits", href: "#benefits" },
     { name: "Use Cases", href: "#use-cases" },
@@ -56,28 +60,19 @@ export default function Home() {
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-20">
-              <div className="flex items-center gap-3">
-                <Image src={LOGO || "/placeholder.svg"} alt="Identus Logo" width={108} height={32} />
-              </div>
-              <nav className="hidden md:flex items-center gap-8">
-                {navLinks.map((link) => (
-                  <a
-                    key={link.name}
-                    href={link.href}
-                    className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
-                  >
-                    {link.name}
-                  </a>
-                ))}
-              </nav>
+            <div className="flex items-center gap-3">
+            <Image src={LOGOSmall} alt="Identus Logo" width={0} height={30} />
+               </div>
+              
               <div className="hidden md:flex items-center">
-                <button
+               <button
                   onClick={() => router.push("/app")}
                   className="group relative inline-flex items-center justify-center px-6 py-2.5 overflow-hidden font-medium text-white bg-gradient-to-r from-teal-500 to-green-500 rounded-full"
                 >
-                  <span>Launch Agent</span>
-                  <ArrowRight className="w-4 h-4 ml-2 transform transition-transform duration-300 group-hover:translate-x-1" />
+                  <span>Open&nbsp;</span>
+                  <Image src={LOGO} alt="Identus Logo" width={0} height={20} />
                 </button>
+              
               </div>
             </div>
           </div>
@@ -86,24 +81,20 @@ export default function Home() {
         {/* Main content */}
         <main className="flex flex-col items-center">
           {/* Hero section */}
-          <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
+          <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div className="space-y-6">
                 <h1 className="text-4xl md:text-6xl font-bold tracking-tighter leading-tight">
-                  Offline-First Identity Agent for Cardano
+                  OFA
                 </h1>
                 <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400">
-                  Deploy decentralized identity solutions with <strong>zero infrastructure</strong>. Use your existing
-                  CIP-30 wallet to issue DIDs and manage credentials entirely offline-first on Cardano.
+                  Is a digital identity agent on top of Cardano and Hyperledger Identus that runs entirely offline, in your browser or desktop application.
+                  <br />
+                  <br />
+                  Entire Digital Identity ecosystem without infrastructure hussle, and no middleman that you can run, control, for free and forever!
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                  <button
-                    onClick={() => router.push("/app")}
-                    className="group relative inline-flex items-center justify-center px-8 py-3.5 overflow-hidden font-medium text-white bg-gradient-to-r from-teal-500 to-green-500 rounded-full"
-                  >
-                    <span>Launch Agent</span>
-                    <ArrowRight className="w-5 h-5 ml-2 transform transition-transform duration-300 group-hover:translate-x-1" />
-                  </button>
+                <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-end">
+  
                 </div>
               </div>
               <div className="relative w-full h-96 lg:h-[450px]">
@@ -114,11 +105,12 @@ export default function Home() {
                 </div>
                 <div className="relative h-full w-full bg-gray-50/50 dark:bg-gray-950/50 backdrop-blur-xl rounded-3xl border border-gray-200 dark:border-gray-800 p-6 flex items-center justify-center">
                   <div className="text-center">
-                    <div className="inline-block p-4 bg-gradient-to-br from-teal-400 to-green-500 rounded-2xl shadow-lg">
-                      <ShieldCheck className="w-16 h-16 text-white" />
+                  <h3 className="mt-4 text-2xl font-bold text-gray-800 dark:text-white">Built with</h3>
+
+                    <div className="inline-block p-4 rounded-2xl shadow-lg">
+                      <Image src={IdentusLogo} alt="Identus Logo" width={0} height={120} />
                     </div>
-                    <h3 className="mt-4 text-2xl font-bold text-gray-800 dark:text-white">Verifiably Secure</h3>
-                    <p className="mt-1 text-gray-600 dark:text-gray-400">On-chain trust, offline control.</p>
+                    <p className="mt-1 text-gray-600 dark:text-gray-400">+Secured by Cardano blockchain.</p>
                   </div>
                 </div>
               </div>
@@ -129,31 +121,31 @@ export default function Home() {
           <section id="features" className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold tracking-tighter">
-                Powered by Hyperledger Identus & Cardano
+                Secure - OnChain - Private
               </h2>
               <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-600 dark:text-gray-400">
-                Leverage open-source standards for a new generation of decentralized identity.
+                Your data is your data, and you own it.
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
                 {
                   icon: Lock,
-                  title: "Offline-First DID Operations",
+                  title: "Where are keys stored?",
                   description:
-                    "Create and manage decentralized identifiers entirely offline. Publish to Cardano when ready for decentralized verification.",
+                    "Encrypted using the password you defined the data will be stored in your browser or desktop application. Loosing password will cause permanent loss of data.",
                 },
                 {
                   icon: ClipboardCheck,
-                  title: "Local Secure Storage",
+                  title: "Offline first? wait, what?",
                   description:
-                    "Your credentials are password-protected locally. You own your data completely with no third-party dependencies.",
+                    "You no longer need heavy deployments. Thanks to Cardano Blockchain, you can issue your DIDs onChain and verifiers will always be able to verify your signatures or the ones of credentials you issued.",
                 },
                 {
                   icon: DownloadCloud,
-                  title: "CIP-30 Wallet Integration",
+                  title: "Why Cardano? Why DIDs",
                   description:
-                    "Connect with any CIP-30 compatible Cardano wallet like Lace, or Nami to issue DIDs with no middleman.",
+                    "DIDs allow you to build decentralised identity applications without relying on any centralised parties, making it fully decentralized and accesible to everyone with access to a Web3 wallet.",
                 },
               ].map((feature, i) => (
                 <div
@@ -228,12 +220,12 @@ export default function Home() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {[
-                { icon: BookOpen, title: "DeFi Applications" },
-                { icon: CreditCard, title: "Developer Tools" },
-                { icon: Activity, title: "Offline-First Apps" },
-                { icon: CopyCheck, title: "Credential Issuance" },
-                { icon: LinkIcon, title: "Trustless Verification" },
-                { icon: Settings2, title: "Rapid Prototyping" },
+                { icon: BookOpen, title: "Uses DIDComm V2" },
+                { icon: CreditCard, title: "W3C + DIF Standards" },
+                { icon: Activity, title: "JWT, SDJWT, Anoncreds" },
+                { icon: CopyCheck, title: "CIP-30 Compatible" },
+                { icon: LinkIcon, title: "Secure encrypted storage" },
+                { icon: Settings2, title: "Distributed Mediators" },
               ].map((useCase, i) => (
                 <div
                   key={i}
@@ -288,7 +280,7 @@ export default function Home() {
                 <Image src={LOGO || "/placeholder.svg"} alt="Identus Logo" width={108} height={32} />
               </div>
               <div className="flex gap-8">
-                {navLinks.map((link) => (
+                {/* {navLinks.map((link) => (
                   <a
                     key={link.name}
                     href={link.href}
@@ -296,9 +288,12 @@ export default function Home() {
                   >
                     {link.name}
                   </a>
-                ))}
+                ))} */}
               </div>
-              <div className="text-sm text-gray-500 dark:text-gray-400">Powered by Hyperledger Identus</div>
+              <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                <span>Powered by</span>
+                <Image src={IdentusLogo} alt="Identus Logo" width={0} height={30} />
+              </div>
             </div>
           </div>
         </footer>

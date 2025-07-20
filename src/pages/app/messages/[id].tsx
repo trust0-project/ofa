@@ -1,11 +1,10 @@
-import { ErrorAlert } from "@/components/ErrorAlert";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Message } from "@/components/Message";
 import { useMessages } from "@trust0/identus-react/hooks";
 import withLayout from "@/components/withLayout";
 import { getLayoutProps } from "@/components/withLayout";
-import { MessageSquare, ArrowDownCircle, Send, Clock, ArrowLeft } from "lucide-react";
+import { MessageSquare, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import SDK from '@hyperledger/identus-sdk';
 
@@ -20,7 +19,7 @@ function MessageDetails() {
     const message = messages.find((message) => message.message.id === id);
 
     useEffect(() => {
-        if (message && !message.read) {
+        if (message) {
             readMessage(message.message);
         }
     }, [message, readMessage])
@@ -63,62 +62,6 @@ function MessageDetails() {
                 <ArrowLeft className="w-4 h-4" />
                 Back to Messages
             </Link>
-
-            {/* Message header */}
-            <div className="bg-white/95 dark:bg-[#0A0A0A]/95 backdrop-blur-lg rounded-2xl border border-gray-200 dark:border-gray-800 p-6 shadow-lg">
-                <div className="flex items-start gap-4">
-                    {/* Direction indicator */}
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                        isReceived 
-                            ? 'bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/50 dark:to-cyan-900/50' 
-                            : 'bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/50 dark:to-emerald-900/50'
-                    }`}>
-                        {isReceived ? (
-                            <ArrowDownCircle className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                        ) : (
-                            <Send className="w-6 h-6 text-green-600 dark:text-green-400" />
-                        )}
-                    </div>
-                    
-                    <div className="flex-1">
-                        {/* Status badge */}
-                        <div className="flex items-center gap-3 mb-3">
-                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                                isReceived
-                                    ? 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300'
-                                    : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
-                            }`}>
-                                {isReceived ? 'Received' : 'Sent'}
-                            </span>
-                            <div className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
-                                <Clock className="w-4 h-4" />
-                                {new Date(msg.createdTime * 1000).toLocaleString()}
-                            </div>
-                        </div>
-                        
-                        {/* Message title */}
-                        <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
-                            {msg.piuri}
-                        </h1>
-                        
-                        {/* From/To info */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                            <div>
-                                <span className="text-gray-500 dark:text-gray-400">From:</span>
-                                <p className="font-mono text-gray-800 dark:text-white break-all">
-                                    {msg.from?.toString() || 'N/A'}
-                                </p>
-                            </div>
-                            <div>
-                                <span className="text-gray-500 dark:text-gray-400">To:</span>
-                                <p className="font-mono text-gray-800 dark:text-white break-all">
-                                    {msg.to?.toString() || 'N/A'}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             {/* Message content */}
             <div className="bg-white/95 dark:bg-[#0A0A0A]/95 backdrop-blur-lg rounded-2xl border border-gray-200 dark:border-gray-800 shadow-lg">

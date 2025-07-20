@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useDatabase, usePrismDID } from "@trust0/identus-react/hooks";
 import { DIDAlias, GroupedDIDs } from "@/utils/types";
 
@@ -21,14 +21,19 @@ export function DIDSelector({
     const [error, setError] = useState<string | null>(null);
     const [flatDIDs, setFlatDIDs] = useState<DIDAlias[]>([]);
     const [initialSelectionDone, setInitialSelectionDone] = useState(false);
+    
+    // Store the callback in a ref to avoid re-running effect when callback changes
+    const onSelectDIDRef = useRef(onSelectDID);
+    onSelectDIDRef.current = onSelectDID;
 
     useEffect(() => {
         if (db) {
             getGroupedDIDs()
                 .then(({ prism = [], ...dids }) => {
                     const groupedData = {
-                        prism,
-                        ...dids
+                        ...dids,
+                        publishedPrismDIDs: prism.filter(did => did.status === 'published'),
+                        unpublishedPrismDIDs: prism.filter(did => did.status !== 'published')
                     };
                     setGroupedDIDs(groupedData);
 
@@ -43,7 +48,7 @@ export function DIDSelector({
                             didItem => didItem.did.toString() === selectedDID
                         );
                         if (matchingDID) {
-                            onSelectDID(matchingDID);
+                            onSelectDIDRef.current(matchingDID);
                         }
                         setInitialSelectionDone(true);
                     }
@@ -52,7 +57,7 @@ export function DIDSelector({
                     setError(err.message);
                 })
         }
-    }, [db, onSelectDID, initialSelectionDone, selectedDID, getGroupedDIDs]);
+    }, [db, initialSelectionDone, selectedDID, getGroupedDIDs]);
 
     const handleDIDChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const didString = event.target.value;
@@ -91,8 +96,9 @@ export function DIDSelector({
                             // Reload DIDs after creation
                             const { prism = [], ...dids } = await getGroupedDIDs();
                             const groupedData = {
-                                prism,
-                                ...dids
+                                ...dids,
+                                publishedPrismDIDs: prism.filter(did => did.status === 'published'),
+                                unpublishedPrismDIDs: prism.filter(did => did.status !== 'published')
                             };
                             setGroupedDIDs(groupedData);
                             setFlatDIDs(Object.values(groupedData).flat());
@@ -113,13 +119,13 @@ export function DIDSelector({
 
                     {Object.entries(groupedDIDs).map(([method, dids]) =>
                         dids.length > 0 && (
-                            <optgroup key={`${method}-group`} label={`${method.toUpperCase()} DIDs`}>
+                            <optgroup key={`${method}-group`} label={`${method === 'publishedPrismDIDs' ? 'Published' : 'Unpublished'} DIDs`}>
                                 {dids.map((didItem) => (
                                     <option
                                         key={didItem.did.toString()}
                                         value={didItem.did.toString()}
                                     >
-                                        {didItem.alias || didItem.did.toString().substring(0, 16) + '...'}
+                                     {didItem.status} - {didItem.alias} - {didItem.did.toString().slice(0,74) + '...'}
                                     </option>
                                 ))}
                             </optgroup>

@@ -87,7 +87,7 @@ function DIDsPage() {
                                     {method} DIDs
                                 </h3>
                             </div>
-                            <div className="bg-white/95 dark:bg-[#0A0A0A]/95 backdrop-blur-lg rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-lg">
+                            <div className="bg-white/95 dark:bg-[#0A0A0A]/95 backdrop-blur-lg rounded-2xl border border-gray-200 dark:border-gray-800 shadow-lg">
                                 {dids.map((didItem, index) => (
                                     <div key={`${method}-${index}`} className="border-b border-gray-200 dark:border-gray-800 last:border-b-0">
                                         <DIDItem didItem={didItem} onUpdate={() => {

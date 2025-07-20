@@ -29,18 +29,20 @@ export function Credential(props: { credential: SDK.Domain.Credential }) {
                 [field],
                 linkSecret?.secret ?? ''
             )
-            const revealed = claims.map((claim, index) => {
-                if (claimIndex === index) {
-                    return {
-                        ...claim,
-                        [field]: (revealedFields as any)[field]
+            // Use functional update to avoid dependency on claims state
+            setClaims(currentClaims => 
+                currentClaims.map((claim, index) => {
+                    if (claimIndex === index) {
+                        return {
+                            ...claim,
+                            [field]: (revealedFields as any)[field]
+                        }
                     }
-                }
-                return claim
-            })
-            setClaims(revealed)
+                    return claim
+                })
+            )
         }
-    }, [agent, agentState, claims])
+    }, [agent, agentState])
 
     const credentialType = credential.credentialType || "Digital Credential";
 

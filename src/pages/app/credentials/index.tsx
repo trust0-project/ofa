@@ -1,7 +1,7 @@
 import type React from "react";
 import SDK from "@hyperledger/identus-sdk";
-import { useEffect, useState } from "react";
-import {  usePeerDID, useCredentials } from "@trust0/identus-react/hooks";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { usePeerDID, useCredentials, useDatabase, useHolder, useMessages } from "@trust0/identus-react/hooks";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { CreditCard, AlertTriangle, CheckCircle } from "lucide-react";
 import AgentRequire from "@/components/AgentRequire";
@@ -13,6 +13,7 @@ import { useAgent } from "@trust0/identus-react/hooks";
 import withLayout from "@/components/withLayout";
 import { OfferCredential } from "@/components/messages";
 import { getLayoutProps } from "@/components/withLayout";
+import { useMessageStatus } from "@/components/messages/utils";
 
 export const getServerSideProps = getLayoutProps;
 
@@ -35,38 +36,213 @@ function CredentialOffer({ message, onReject }: { message: SDK.Domain.Message, o
     </AgentRequire>
 }
 
+
+function CredentialSelector({ request }: { request: SDK.Domain.Message }) {
+    const { credentials } = useCredentials()
+    const [selectedCredential, setSelectedCredential] = useState<SDK.Domain.Credential | null>(credentials.length > 0 ? credentials[0] : null);
+    const { handlePresentationRequest, state: agentState, agent } = useHolder();
+    const { deleteMessage, load: loadMessages } = useMessages();
+    const { state: dbState } = useDatabase();
+    const [isAccepting, setIsAccepting] = useState(false);
+    const [isRejecting, setIsRejecting] = useState(false);
+
+    const requestPresentation = useMemo(() => request.attachments.at(0)!.payload, [request]);
+
+    const claims: any[] = useMemo(() => {
+        return requestPresentation?.presentation_definition ?
+            requestPresentation.presentation_definition.input_descriptors.at(0)?.constraints.fields ?? [] :
+            []
+    }, [requestPresentation]);
+
+    const fields = useMemo(() => {
+        return claims.reduce<any>((all, claim) => [
+            ...all,
+            {
+                name: claim.name,
+                type: claim.filter.type,
+                value: claim.filter.pattern || claim.filter.value || claim.filter.enum
+            }
+        ], [])
+    }, [claims]);
+
+
+    const availableCredentials = useMemo(() => {
+        return credentials.filter((credential) => {
+            // Pre-compute claim keys for this credential to avoid repeated Object.keys() calls
+            const credentialClaimKeys = credential.claims.map(claim => Object.keys(claim));
+            
+            const hasFields = fields.every((field: any) => {
+                if (field.name === 'iss' || field.name === "issuer") {
+                    return credential.issuer.includes(field.value);
+                }
+                // Use pre-computed keys instead of calling Object.keys() in nested loops
+                return credentialClaimKeys.some((keys) => keys.includes(field.name));
+            })
+            return hasFields;
+        })
+    }, [credentials, fields]);
+
+    const onHandleAccept = useCallback(async () => {
+        if (!agent || agentState !== SDK.Domain.Startable.State.RUNNING) {
+            return;
+        }
+        if (!selectedCredential) {
+            throw new Error("No credential selected");
+        }
+        try {
+            setIsAccepting(true);
+            await handlePresentationRequest(request, selectedCredential);
+        } finally {
+            setIsAccepting(false);
+        }
+    }, [agent, agentState, selectedCredential, handlePresentationRequest, request]);
+
+    const onHandleReject = useCallback(async () => {
+        if (dbState === 'loaded') {
+            try {
+                setIsRejecting(true);
+                await deleteMessage(request);
+                await loadMessages();
+            } finally {
+                setIsRejecting(false);
+            }
+        }
+    }, [dbState, deleteMessage, request, loadMessages]);
+
+    return <div className="bg-white/95 dark:bg-[#0A0A0A]/95 backdrop-blur-lg rounded-lg shadow-lg overflow-hidden border border-gray-200 dark:border-gray-800">
+        <div className="p-4">
+
+            <h2>Choose your Credential</h2>
+            {
+                availableCredentials.length === 0 ?
+                    <>
+                        <p>You have no credentials that match the request</p>
+                        <button
+                            className="mt-4 mx-2 bg-red-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+                            onClick={onHandleReject}
+                            disabled={dbState !== 'loaded' || isRejecting}
+                        >
+                            {isRejecting ? 'Rejecting...' : 'Reject'}
+                        </button>
+
+                    </> :
+                    <>
+
+                        <select
+                            value={selectedCredential?.id}
+                            onChange={(e) => {
+                                const credential = credentials.find((c) => c.id === e.target.value);
+                                if (credential) {
+                                    setSelectedCredential(credential);
+                                }
+                            }}
+                            className="w-full px-3 py-2 border border-slate-300 rounded-lg bg-white text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                        >
+                            {availableCredentials.map((credential) => {
+                                const credentialClaimKeys = credential.claims.reduce((allClaims, claim) => {
+                                    const claimKeys = Object.keys(claim)
+                                        .filter((key) => !['iss', 'sub', 'iat', 'jti'].includes(key))
+                                        .map((key) => `${key}: ${claim[key].value}`)
+                                        .slice(0, 2)
+                                    return `${allClaims}${claimKeys.join(', ')}`
+                                }, '')
+                                return <option key={credential.id} value={credential.id}>
+                                    Credential[{credential.credentialType}] {credentialClaimKeys} {credential.issuer.slice(0, 74)}
+                                </option>
+                            })}
+                        </select>
+
+                        <button
+                            className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+                            onClick={onHandleAccept}
+                            disabled={!agent || agentState !== SDK.Domain.Startable.State.RUNNING || !selectedCredential || isAccepting || isRejecting}
+                        >
+                            {isAccepting ? 'Accepting...' : 'Accept'}
+                        </button>
+                        <button
+                            className="mt-4 mx-2 bg-red-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+                            onClick={onHandleReject}
+                            disabled={dbState !== 'loaded' || isAccepting || isRejecting}
+                        >
+                            {isRejecting ? 'Rejecting...' : 'Reject'}
+                        </button>
+
+                    </>
+
+
+
+
+            }
+        </div>
+    </div>
+}
+
+
+function PresentationRequest({ message }: { message: SDK.Domain.Message }) {
+    const { hasAnswered } = useMessageStatus(message);
+    return hasAnswered ?
+        <p>You already accepted this offer.</p> :
+        <CredentialSelector request={message} />
+}
+
+
 function CredentialsPage() {
-    const { peerDID } = usePeerDID();
+    const { peerDID, create: createPeerDID } = usePeerDID();
     const router = useRouter();
     const searchParams = useSearchParams();
     const pathname = usePathname();
-    const { credentials } = useCredentials();
+    const { credentials, load: loadCredentials } = useCredentials();
     const [message, setMessage] = useState<SDK.Domain.Message | undefined>();
-    
+    const { state: agentState } = useAgent();
+
     useEffect(() => {
-        if (peerDID) {
-            const oob = searchParams.get('oob');
-            if (oob) {
-                const decoded = base64.baseDecode(oob as string);
-                const message = SDK.Domain.Message.fromJson(Buffer.from(decoded).toString());
-                const attachment = message.attachments.at(0)?.payload;
-                setMessage(SDK.Domain.Message.fromJson({
-                    ...attachment,
-                    from: message.from,
-                    to: peerDID,
-                }));
-                router.replace(pathname);
+        const initializeCredentials = async () => {
+            try {
+                if (agentState === SDK.Domain.Startable.State.RUNNING) {
+                    const oob = searchParams.get('oob');
+                    if (oob) {
+                        const decoded = base64.baseDecode(oob as string);
+                        const message = SDK.Domain.Message.fromJson(Buffer.from(decoded).toString());
+                        const attachment = message.attachments.at(0)?.payload;
+                        const peerDID = await createPeerDID();
+                        setMessage(SDK.Domain.Message.fromJson({
+                            ...attachment,
+                            from: message.from,
+                            to: peerDID,
+                        }));
+                        router.replace(pathname);
+                    }
+                }
+                await loadCredentials();
+            } catch (error) {
+                console.error('Error initializing credentials:', error);
+                // Still try to load credentials even if OOB parsing fails
+                try {
+                    await loadCredentials();
+                } catch (loadError) {
+                    console.error('Error loading credentials:', loadError);
+                }
             }
-        }
-    }, [searchParams, peerDID, router, pathname]);
+        };
+        
+        initializeCredentials();
+    }, [searchParams, createPeerDID, router, pathname, agentState, loadCredentials]);
+
 
     return (
         <div className="max-w-6xl mx-auto">
             {message && (
                 <div className="mb-6">
-                    <CredentialOffer message={message} onReject={() => {
-                        setMessage(undefined);
-                    }} />
+                    {
+                        message.piuri === SDK.ProtocolType.DidcommOfferCredential && <CredentialOffer message={message} onReject={() => {
+                            setMessage(undefined);
+                        }} />
+
+                    }
+
+                    {
+                        message.piuri === SDK.ProtocolType.DidcommRequestPresentation && <PresentationRequest message={message} />
+                    }
                 </div>
             )}
 
@@ -115,7 +291,7 @@ function CredentialsPage() {
             )}
         </div>
     );
-} 
+}
 
 
 export default withLayout(CredentialsPage, {

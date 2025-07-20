@@ -6,7 +6,7 @@ import { Transaction } from "@meshsdk/core";
 import { BLOCKFROST_KEY_NAME } from "@/config";
 import { ErrorAlert } from "./ErrorAlert";
 import SelectWallet from "./SelectWallet";
-import { useAgent, useDatabase } from "@trust0/identus-react/hooks";
+import { useAgent, useDatabase, usePrismDID } from "@trust0/identus-react/hooks";
 
 import { DIDAlias } from "@/utils/types";
 
@@ -20,7 +20,12 @@ export function DIDItem({ didItem, onUpdate }: { didItem: DIDAlias, onUpdate: (d
     const [expanded, setExpanded] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const didString = didItem.did.toString();
+    const { isPublished: isPublishedPrismDID } = usePrismDID();
+
+    debugger;
+
     const [publishing, setPublishing] = useState(false);
+    const [isPublished, setIsPublished] = useState(false);
     const [wasPublishing, setWasPublishing] = useState(false);
 
     const buildAndSubmitTransaction = useCallback(async (metadataBody: any) => {
@@ -55,7 +60,6 @@ export function DIDItem({ didItem, onUpdate }: { didItem: DIDAlias, onUpdate: (d
             const signingKey = document.verificationMethods.find(key => key.id.includes("#master"));
             const projectId = await getSettingsByKey(BLOCKFROST_KEY_NAME) ?? null;
             const walletId = currentWallet;
-            console.log("Publish clicked - Wallet ID:", walletId, "Project ID:", projectId);
 
             if (!walletId) {
                 console.log("No wallet connected, showing wallet modal");
@@ -91,8 +95,8 @@ export function DIDItem({ didItem, onUpdate }: { didItem: DIDAlias, onUpdate: (d
                 const isConfirmed = await checkTransactionConfirmation(txHash, projectId);
                 if (isConfirmed) {
                     updateDIDStatus(didItem.did, 'published')
-
                     setPublishing(false);
+                    setIsPublished(true);
                     onUpdate({ ...didItem, status: 'published' })
                 } else {
                     await new Promise<void>((resolve) => {
@@ -116,10 +120,11 @@ export function DIDItem({ didItem, onUpdate }: { didItem: DIDAlias, onUpdate: (d
     }, [agent, didItem, didString, getSettingsByKey, currentWallet, buildAndSubmitTransaction, updateDIDStatus, onUpdate])
 
     useEffect(() => {
-        if (wallet && wasPublishing) {
+        if (connected && wallet && wasPublishing) {
+            setWasPublishing(false);
             onPublishClick();
         }
-    }, [wallet, wasPublishing, onPublishClick])
+    }, [connected, onPublishClick, wallet, wasPublishing])
 
     async function checkTransactionConfirmation(txHash: string, project_id: string) {
         try {
@@ -159,7 +164,10 @@ export function DIDItem({ didItem, onUpdate }: { didItem: DIDAlias, onUpdate: (d
         setResolvedData(null);
 
         try {
-            const result = await agent.castor.resolveDID(didString);
+            const isPublished = await isPublishedPrismDID(SDK.Domain.DID.fromString(didString))
+            const result = await agent.castor.resolveDID(
+                isPublished ? SDK.Domain.DID.fromString(didString.slice(0, 74)) : SDK.Domain.DID.fromString(didString)
+            );
             setResolvedData(result);
         } catch (err: any) {
             setError(err.message || "Failed to resolve DID");
@@ -178,10 +186,16 @@ export function DIDItem({ didItem, onUpdate }: { didItem: DIDAlias, onUpdate: (d
             )}
 
             {
-                showModal && <SelectWallet onSelected={(wallet) => {
-                    setWallet(wallet.name);
-                    setShowModal(false);
-                }} />
+                showModal && <SelectWallet 
+                    onSelected={(wallet) => {
+                        setWallet(wallet.name);
+                        setShowModal(false);
+                    }}
+                    onCancel={() => {
+                        setShowModal(false);
+                        setWasPublishing(false);
+                    }}
+                />
             }
 
             <div className="flex justify-between items-center">
@@ -204,7 +218,7 @@ export function DIDItem({ didItem, onUpdate }: { didItem: DIDAlias, onUpdate: (d
                                             disabled={publishing}
                                             className="ml-2 px-2 py-0.5 bg-button-primary-light hover:bg-button-primary-dark text-white rounded text-xs transition-colors focus:outline-none focus:ring-2 focus:ring-button-primary-light/50 focus:ring-opacity-50 disabled:bg-button-primary-light/50 disabled:cursor-not-allowed"
                                         >
-                                            {publishing ? 'Publishing...' : 'Publish'}
+                                            {publishing ? 'Publishing...' : isPublished ? 'Published' : 'Publish'}
                                         </button>
                                     ) : ` - ${didItem.status.slice(0, 1).toUpperCase() + didItem.status.slice(1)}`
                                 }
@@ -221,7 +235,7 @@ export function DIDItem({ didItem, onUpdate }: { didItem: DIDAlias, onUpdate: (d
                 </div>
                 <div className="flex space-x-3">
                     <button
-                        onClick={() => resolveDID(didString.split(':').slice(0, 3).join(':'))}
+                        onClick={() => resolveDID(didString)}
                         disabled={isResolving}
                         className="px-3 py-1 bg-status-success-light hover:bg-status-success-dark text-white rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-status-success-light/50 focus:ring-opacity-50 disabled:bg-status-success-light/50 disabled:cursor-not-allowed text-sm"
                     >

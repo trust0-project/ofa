@@ -11,11 +11,18 @@ export function PeerDIDCopy({type}: {type: 'peerDID' | 'prismDID'}) {
 
     useEffect(() => {
         if (state === SDK.Domain.Startable.State.RUNNING && !peerDID) {
-            if (type === 'peerDID') {
-                createPeerDID();
-            } else {
-                createPrismDID('did');
-            }
+            const initializeDID = async () => {
+                try {
+                    if (type === 'peerDID') {
+                        await createPeerDID();
+                    } else {
+                        await createPrismDID('did');
+                    }
+                } catch (error) {
+                    console.error(`Error creating ${type}:`, error);
+                }
+            };
+            initializeDID();
         }
     }, [state, createPeerDID, createPrismDID, peerDID, prismDID, type]);
 

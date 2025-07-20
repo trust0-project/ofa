@@ -1,6 +1,6 @@
 import SDK from "@hyperledger/identus-sdk";
-import { useEffect, useState } from "react";
-import { useAgent, useIssuer, useMessages } from "@trust0/identus-react/hooks";
+import { useCallback, useEffect, useState } from "react";
+import { useAgent, useIssuer, useMessages, usePrismDID } from "@trust0/identus-react/hooks";
 
 import { useDatabase } from "@trust0/identus-react/hooks";
 import { MessageTitle } from "./MessageTitle";
@@ -11,28 +11,31 @@ import { usePermissions } from "@/hooks";
 export function CredentialRequest(props: { message: SDK.Domain.Message }) {
     const router = useRouter();
     const { message } = props;
-    const { hasResponse, hasAnswered, isReceived } = useMessageStatus(message);
+    const {getIssuanceStatus} = useIssuer()
+    const { hasResponse, hasAnswered } = useMessageStatus(message);
 
-    const { hasPermission } = usePermissions();
     const { getIssuanceFlow } = useDatabase();
-    const { deleteMessage } = useMessages()
+    const { deleteMessage, sentMessages } = useMessages()
 
     const { agent, issueCredential } = useIssuer();
 
-    const [loaded, setLoaded] = useState(false);
-    const [isAgent, setIsAgent] = useState(false);
     const [isAnswering, setIsAnswering] = useState(false);
+    const { isPublished: isPublishedPrismDID } = usePrismDID();
 
-    useEffect(() => {
-        const load = async () => {
-            const isAgentEnabled = await hasPermission('agent');
-            setIsAgent(isAgentEnabled);
-            setLoaded(true);
-        }
-        load();
-    }, [hasPermission, getIssuanceFlow, message.attachments, message.thid]);
+    const isReceived = message.direction === SDK.Domain.MessageDirection.RECEIVED;
 
+    const isRequestPending = useCallback((message: SDK.Domain.Message) => {
+        const hasSentIssuance = sentMessages
+            .some(m =>
+                m.piuri === SDK.ProtocolType.DidcommIssueCredential &&
+                m.direction === SDK.Domain.MessageDirection.SENT &&
+                (m.thid === message.id || m.thid === message.thid)
+            );
 
+        return !hasSentIssuance;
+    }, [sentMessages]);
+
+    
     useEffect(() => {
         if (hasAnswered) {
             setIsAnswering(false);
@@ -46,7 +49,10 @@ export function CredentialRequest(props: { message: SDK.Domain.Message }) {
             if (!issuanceFlow) {
                 throw new Error("No issuance flow found");
             }
-            const issuerDID = SDK.Domain.DID.fromString(issuanceFlow.issuingDID);
+            const issuerDID = await isPublishedPrismDID(SDK.Domain.DID.fromString(issuanceFlow.issuingDID)) ? 
+            SDK.Domain.DID.fromString(issuanceFlow.issuingDID.slice(0,74)) : 
+            SDK.Domain.DID.fromString(issuanceFlow.issuingDID);
+            
             if (issuanceFlow.credentialFormat === SDK.Domain.CredentialType.JWT || issuanceFlow.credentialFormat === SDK.Domain.CredentialType.SDJWT) {
                 await issueCredential(
                     issuanceFlow.credentialFormat,
@@ -66,9 +72,6 @@ export function CredentialRequest(props: { message: SDK.Domain.Message }) {
         await router.push('/app/messages');
     }
 
-    if (!loaded) {
-        return null
-    }
 
     const format = message.attachments.at(0)?.format;
 
@@ -79,14 +82,14 @@ export function CredentialRequest(props: { message: SDK.Domain.Message }) {
             <MessageTitle message={message} title="Credential Request" />
             <p>By clicking accept you will be issuing a {format} credential to the requester</p>
 
-            {hasResponse && (
+            {!isRequestPending(message) && (
                 <div className="mt-5 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
                     <p className="font-medium">Response already sent</p>
                     <p className="text-sm">You have already issued a credential for this request.</p>
                 </div>
             )}
 
-            {!hasResponse && (
+            {isRequestPending(message) && (
                 <>
                     {isAnswering && (
                         <div className="mt-5 flex items-center">
@@ -102,8 +105,6 @@ export function CredentialRequest(props: { message: SDK.Domain.Message }) {
                             }</span>
                         </div>
                     )}
-
-                    {!isAnswering && (
                         <>{isReceived ?
                             <div className="mt-5 space-x-3">
                                 <button
@@ -128,7 +129,6 @@ export function CredentialRequest(props: { message: SDK.Domain.Message }) {
                                 </button>
                             </div>
                         }</>
-                    )}
                 </>
             )}
         </div>

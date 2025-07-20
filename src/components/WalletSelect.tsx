@@ -22,7 +22,7 @@ export function WalletSelect() {
             console.error("Error disconnecting wallet:", err);
             setError(`Error disconnecting wallet: ${err.message}`);
         }
-    }, [disconnect, setWallet, setIsOpen]);
+    }, [disconnect, setWallet]);
 
     const onHandleConnect = useCallback(async (wallet: Wallet) => {
         try {
@@ -33,7 +33,7 @@ export function WalletSelect() {
             console.error("Error connecting wallet:", err);
             setError(`Error connecting wallet: ${err.message}`);
         }
-    }, [connect, setWallet, setIsOpen]);
+    }, [connect, setWallet]);
 
 
     useEffect(() => {

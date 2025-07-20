@@ -52,10 +52,10 @@ function SettingsPage({
     const [showBlockfrostKey, setShowBlockfrostKey] = useState(false);
     const [restoreLoading, setRestoreLoading] = useState(false);
     const [restoreResult, setRestoreResult] = useState<{ success: boolean, message: string } | null>(null);
+    // Handle Blockfrost key initialization
     useEffect(() => {
-        async function load() {
+        async function loadBlockfrostKey() {
             if (dbState === "loaded") {
-                // Always prioritize server values and overwrite database if they exist
                 if (serverBlockfrostKey) {
                     setBlockfrostKey(serverBlockfrostKey);
                     // Overwrite database value with server value
@@ -68,7 +68,15 @@ function SettingsPage({
                         setBlockfrostKey(blockfrost);
                     }
                 }
+            }
+        }
+        loadBlockfrostKey();
+    }, [dbState, serverBlockfrostKey, isBlockfrostManaged, getSettingsByKey, storeSettingsByKey]);
 
+    // Handle Mediator DID initialization
+    useEffect(() => {
+        async function loadMediatorDID() {
+            if (dbState === "loaded") {
                 if (serverMediatorDID) {
                     setMediatorDID(serverMediatorDID);
                     // Overwrite database value with server value
@@ -81,7 +89,15 @@ function SettingsPage({
                         setMediatorDID(mediatorDID);
                     }
                 }
+            }
+        }
+        loadMediatorDID();
+    }, [dbState, serverMediatorDID, isMediatorManaged, getSettingsByKey, storeSettingsByKey]);
 
+    // Handle Resolver URL initialization  
+    useEffect(() => {
+        async function loadResolverUrl() {
+            if (dbState === "loaded") {
                 if (serverResolverUrl) {
                     setResolverUrl(serverResolverUrl);
                     // Overwrite database value with server value
@@ -96,8 +112,8 @@ function SettingsPage({
                 }
             }
         }
-        load();
-    }, [dbState, getSettingsByKey, storeSettingsByKey, serverBlockfrostKey, serverMediatorDID, serverResolverUrl, isBlockfrostManaged, isMediatorManaged, isResolverManaged]);
+        loadResolverUrl();
+    }, [dbState, serverResolverUrl, isResolverManaged, getSettingsByKey, storeSettingsByKey]);
 
     const handleSaveAll = async () => {
         setLoading(true);

@@ -1,8 +1,6 @@
 <p align="center">
- <h1 align="center">Identus Offline first, decentralised agent</h1>
-  <h3 align="center">A secure light-weight and dependency free database wrapper for the web.</h3>
   <div style="margin:auto;width:300px;">
-  <img src="https://raw.githubusercontent.com/trust0-project/RIDB/refs/heads/main/logo.svg" alt="Trust0" width="128" />
+  <img src="./public/logos/ofa-dark.svg" alt="Trust0" width="128" />
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <img src="https://raw.githubusercontent.com/hyperledger-identus/.github/f21f0091231d65d63fb0cd2101df3eb6f349b1ec/resources/images/hyperledger-identus.svg" alt="Identus" width="128">
   </div> 

@@ -1,16 +1,8 @@
 import { useCallback, useContext } from "react";
 
-import { PrismDIDContext, RouterContext, ThemeContext } from "@/context";
+import {  RouterContext, ThemeContext } from "@/context";
 import { useDatabase } from "@trust0/identus-react/hooks";
 
-
-export function usePrismDID() {
-    const context = useContext(PrismDIDContext);
-    if (!context) {
-        throw new Error('usePrismDID must be used within a PrismDIDProvider');
-    }
-    return context;
-}
 
 export function useTheme() {
     const context = useContext(ThemeContext);
