@@ -26,7 +26,7 @@ export default function App({ Component, pageProps }: AppProps) {
                 <ThemeProvider>
                     <MeshProvider>
                         <RouterProvider>
-                            <AgentProvider>
+                            <AgentProvider worker={true}>
                                 <Component {...pageProps} />
                             </AgentProvider>
                         </RouterProvider>
